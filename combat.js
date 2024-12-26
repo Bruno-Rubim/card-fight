@@ -1,5 +1,5 @@
 import { Player } from "./classes/player-class.js"
-import { drawBodyCards } from "./visuals.js"
+import { gameManager } from "./current-game.js"
 
 const bodyCardNames = [
     'head',
@@ -22,20 +22,20 @@ const rollDiceSet = (setSize) => {
     return resultSet
 }
 
-const rerollHit = (partNumber, diceSet) => {
-    for (let i = 0; i < diceSet.length; i++) {
-        if (diceSet[i] == partNumber) {
-            diceSet[i] = rollDie()
-        }
-    }
-    return diceSet;
-}
-
 const rerollDie = (partNumber, diceSet) => {
     for (let i = 0; i < diceSet.length; i++) {
         if (diceSet[i] == partNumber) {
             diceSet[i] = rollDie()
             break;
+        }
+    }
+    return diceSet;
+}
+
+const rerollHit = (partNumber, diceSet) => {
+    for (let i = 0; i < diceSet.length; i++) {
+        if (diceSet[i] == partNumber) {
+            diceSet[i] = rollDie()
         }
     }
     return diceSet;
@@ -91,10 +91,6 @@ export const attack = (attacker = new Player(), victim = new Player()) => {
     let hits = checkHits(diceSet, victim);
     console.log(diceSet);
     console.log(hits)
-    for (let i = 0; i < hits.length; i++) {
-        if (hits[i]) {
-            victim.bodyCards[i] = false;
-        }
-    }
+    gameManager.hitHandler(attacker, victim, hits)
     let stealCount = Math.floor(countInSet(5, diceSet) / 2);
 }

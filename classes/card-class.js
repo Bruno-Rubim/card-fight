@@ -1,5 +1,5 @@
 export class Card {
-    constructor({type = null, name = '', effectTrigger = ''}){
+    constructor({type = null, name = '', effectTrigger = '', triggerHandler = null}){
         this.type = type;
         this.name = name;
         this.effectTrigger = effectTrigger;

@@ -54,7 +54,6 @@ export async function drawActiveCards(player = new Player()){
     
     for (let i = 0; i < player.cards.length; i++) {
         let backgroundImage = await loadImg("/images/" + player.cards[i].type + "-cards/bg.png");
-        console.log(player.cards[i].imageSrc);
         let cardImage = await loadImg(player.cards[i].imageSrc);
         ctx.drawImage(backgroundImage, (i * 136) + 4, 4);
         ctx.drawImage(cardImage, (i * 136) + 4, 4);
