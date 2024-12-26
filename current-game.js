@@ -11,7 +11,7 @@ const player2 = new Player({cards: [], color: 'blue', id: 2})
 player2.cards.push(cards.combatBoots);
 
 const gameState = new GameState([player1, player2])
-export const gameManager = new GameManager(gameState)
+export const gameManager = new GameManager({gameState})
 
 gameManager.attackHandler(player1, player2);
 

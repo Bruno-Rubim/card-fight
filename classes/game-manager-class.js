@@ -1,12 +1,13 @@
 import { Player } from "./player-class.js";
 import * as combat from "../combat.js";
+import { GameState } from "./game-state-class.js";
 
 export class GameManager {
-    constructor({gameState = null}){
+    constructor({gameState = new GameState()}){
         this.gameState = gameState;
     }
     
-    getCardsEffectsTrigger = (player = new Player(), tirgger = '') => {
+    getCardsByEffectsTrigger(player = new Player(), tirgger = '') {
         let effects = [];
         player.cards.forEach(card => {
             if (card.effectTrigger == tirgger) {
@@ -16,18 +17,20 @@ export class GameManager {
         return effects
     }
 
-    attackHandler = (attacker = new Player(), victim = new Player()) => {
+    attackHandler(attacker = new Player(), victim = new Player()) {
         let attackData = {
-            attacker: attacker,
-            victim: victim,
+            attacker,
+            victim,
             cancelAttack: false,
             extraDice: 0
         }
 
-        let effects = this.getCardsEffectsTrigger(attacker, 'attack');
-        effects.forEach(effect => {
-            effect(attackData);
-        });
+        let effects = this.getCardsByEffectsTrigger(attacker, 'attack');
+        for (const effect of effects) {
+            if (!effect(attackData)) {
+                break;
+            }
+        }
 
         let diceSet = combat.rollDiceSet(attacker.baseDice + attackData.extraDice);
         let hits = combat.checkHits(diceSet, victim);
@@ -45,7 +48,7 @@ export class GameManager {
         } 
     }
 
-    hitHandler = (attacker = new Player(), victim = new Player(), hits) => {
+    hitHandler(attacker = new Player(), victim = new Player(), hits) {
         let attackData = {
             attacker: attacker,
             victim: victim,
@@ -53,7 +56,7 @@ export class GameManager {
             cancelAttack: false
         }
 
-        let effects = this.getCardsEffectsTrigger(victim, 'been-hit');
+        let effects = this.getCardsByEffectsTrigger(victim, 'been-hit');
 
         effects.forEach(effect => {
             effect(attackData);
@@ -61,17 +64,22 @@ export class GameManager {
         if (attackData.cancelAttack){
             this.cancelAttack();
             return;
-        } else {
-            for (let i = 0; i < attackData.hits.length; i++) {
-                if (attackData.hits[i]) {
-                    victim.bodyCards[i] = false;
+        }
+        for (let i = 0; i < attackData.hits.length; i++) {
+            if (attackData.hits[i] == 'crit') {
+                for (let j = 0; j < victim.bodyCards.length; j++) {
+                    if (victim.bodyCards[j]) {
+                        victim.bodyCards[j] = false;
+                        break;
+                    }
                 }
-
+            } else if (attackData.hits[i]) {
+                victim.bodyCards[i] = false;
             }
         }
     }
 
-    lootHandler = (attacker = new Player(), victim = new Player(), loots) => {
+    lootHandler(attacker = new Player(), victim = new Player(), loots) {
         let attackData = {
             attacker: attacker,
             victim: victim,
@@ -80,8 +88,8 @@ export class GameManager {
             cancelSteal: false,
         }
         
-        let effects = this.getCardsEffectsTrigger(attacker, 'steal');
-        effects.push(...this.getCardsEffectsTrigger(victim, 'been-stolen'));
+        let effects = this.getCardsByEffectsTrigger(attacker, 'steal');
+        effects.push(...this.getCardsByEffectsTrigger(victim, 'been-stolen'));
         
         for (let i = 0; i < victim.cards.length && loots > 0; i++) {
             if (victim.cards[i].type == 'item') {
@@ -96,15 +104,15 @@ export class GameManager {
         console.log(victim);
     }
 
-    performWin = (player) => {
+    performWin(player) {
         console.log('Player ' + player.id + ' won!')
     }
     
-    cancelAttack = () => {
+    cancelAttack() {
         console.log('Canceled!');
     }
     
-    checkWinCondition = () => {
+    checkWinCondition() {
         if (this.gameState.checkLivingPlayers().length == 1) {
             this.performWin(this.gameState.checkLivingPlayers[0]);
         }

@@ -52,34 +52,25 @@ export const countInSet = (value, set) => {
 }
 
 export const checkHits = (diceSet, victim = new Player()) => {
-    let cards = victim.cards;
-    let hits = [false, false, false, false, false]
+    let hits = Array(5).fill(false);
     let lightMin = 3;
     let heavyMin = 4;
     let critMin = 5;
     for (let i = 0; i < victim.bodyCards.length; i++) {
-        if (countInSet(i, diceSet) < lightMin) {
+        const count = countInSet(i, diceSet)
+        if (count < lightMin) {
             continue
         }
         if (!victim.bodyCards[i]) {
             rerollHit(i, diceSet);
             checkHits(diceSet, victim);
         } else {
-            if (countInSet(i, diceSet) >= critMin) {
+            if (count >= critMin) {
                 hits[i] = 'crit';
-            } else if (countInSet(i, diceSet) >= heavyMin) {
+            } else if (count >= heavyMin) {
                 hits[i] = 'heavy';
-            } else if (countInSet(i, diceSet) >= lightMin) {
+            } else if (count >= lightMin) {
                 hits[i] = 'light';
-            }
-        }
-        if (hits[i] == 'crit') {
-            console.log('critical!');
-            for (let j = 0; j < victim.bodyCards.length; j++) {
-                if (victim.bodyCards[j]) {
-                    victim.bodyCards[j] = false;
-                    break;
-                }
             }
         }
     }
