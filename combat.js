@@ -10,11 +10,11 @@ const bodyCardNames = [
     'loot',
 ]
 
-const rollDie = () => {
+export const rollDie = () => {
     return (Math.floor(Math.random() * 6))
 }
 
-const rollDiceSet = (setSize) => {
+export const rollDiceSet = (setSize) => {
     let resultSet = []
     for (let i = 0; i < setSize; i++) {
         resultSet.push(rollDie())
@@ -22,7 +22,7 @@ const rollDiceSet = (setSize) => {
     return resultSet
 }
 
-const rerollDie = (partNumber, diceSet) => {
+export const rerollDie = (partNumber, diceSet) => {
     for (let i = 0; i < diceSet.length; i++) {
         if (diceSet[i] == partNumber) {
             diceSet[i] = rollDie()
@@ -32,7 +32,7 @@ const rerollDie = (partNumber, diceSet) => {
     return diceSet;
 }
 
-const rerollHit = (partNumber, diceSet) => {
+export const rerollHit = (partNumber, diceSet) => {
     for (let i = 0; i < diceSet.length; i++) {
         if (diceSet[i] == partNumber) {
             diceSet[i] = rollDie()
@@ -41,7 +41,7 @@ const rerollHit = (partNumber, diceSet) => {
     return diceSet;
 }
 
-const countInSet = (value, set) => {
+export const countInSet = (value, set) => {
     let n = 0;
     for(let i = 0; i < set.length; i++){
         if(set[i] == value){
@@ -51,7 +51,7 @@ const countInSet = (value, set) => {
     return n;
 }
 
-const checkHits = (diceSet, victim = new Player()) => {
+export const checkHits = (diceSet, victim = new Player()) => {
     let cards = victim.cards;
     let hits = [false, false, false, false, false]
     let lightMin = 3;
@@ -87,10 +87,5 @@ const checkHits = (diceSet, victim = new Player()) => {
 }
 
 export const attack = (attacker = new Player(), victim = new Player()) => {
-    let diceSet = rollDiceSet(attacker.baseDice);
-    let hits = checkHits(diceSet, victim);
-    console.log(diceSet);
-    console.log(hits)
-    gameManager.hitHandler(attacker, victim, hits)
-    let stealCount = Math.floor(countInSet(5, diceSet) / 2);
+
 }
