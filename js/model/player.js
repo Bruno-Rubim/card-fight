@@ -5,11 +5,11 @@ class Player {
     constructor({
         id = 0,
         color = '',
-        cards = [new Card()],
+        activeCards = [new Card()],
     }){
         this.id = id;
         this.color = color;
-        this.cards = cards;
+        this.activeCardsactiveCards = activeCards;
         this.bodyCards = {
             [LEFT_FOOT]: true,
             [RIGHT_FOOT]: true,

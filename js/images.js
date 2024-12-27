@@ -27,7 +27,7 @@ const images = {
     prosthetics: await loadImage('./images/instant-cards/prosthetics.png'),
     
     reactionBg: await loadImage('./images/reaction-cards/bg.png'),
-    bananaPeel: await loadImage('./images/reaction-cards/bananaPeel.png'),
+    bananaPeel: await loadImage('./images/reaction-cards/banana-peel.png'),
 };
 
 export default images;

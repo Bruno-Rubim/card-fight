@@ -7,9 +7,12 @@ const gameState = new GameState();
 
 const combatBoots = new Card({name: 'combatBoots', type: 'item'}) 
 const prosthetics = new Card({name: 'prosthetics', type: 'instant'}) 
-const colorblindSpider = new Card({name: 'colorblindSpider', type: 'creature'}) 
-const player1 = new Player({id: 0, cards: [combatBoots, prosthetics, colorblindSpider]})
+const colorblindSpider = new Card({name: 'colorblindSpider', type: 'creature'})
 
-gameState.players = [player1]
+const player1 = new Player({id: 0, cards: [combatBoots, prosthetics]})
 
-drawPlayerCards(gameState.players[0])
+const player2 = new Player({id: 1, cards: [colorblindSpider]})
+
+gameState.players = [player1, player2]
+
+gameState.players.forEach(player => drawPlayerCards(player))

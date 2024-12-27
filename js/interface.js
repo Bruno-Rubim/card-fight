@@ -15,12 +15,14 @@ const colors = [
     'orange',
 ]
 
-const canvas = document.querySelectorAll('canvas')[0];
-canvas.width = 692
-canvas.height = 408
+const canvases = document.querySelectorAll('.player-canvas');
+canvases.forEach(canvas => {
+    canvas.width = window.innerWidth - 100
+    canvas.height = 200
+})
 
 export function drawPlayerCards(player = new Player()){
-    const canvas = document.querySelectorAll('canvas')[player.id];
+    const canvas = canvases[player.id];
     const ctx = canvas.getContext('2d');
     BODY_PARTS.forEach((bodyPart, i) => {
         const color = colors[player.id]
@@ -29,12 +31,11 @@ export function drawPlayerCards(player = new Player()){
         ctx.drawImage(bgImg, (cardWidth + cardGap) * i, 0);
         ctx.drawImage(img, (cardWidth + cardGap) * i, 0);
     });
-    player.cards.forEach((card, i) => {
+    player.activeCards.forEach((card, i) => {
         const type = card.type
         const bgImg = images[type + 'Bg']
         const img = images[card.name]
-        ctx.drawImage(bgImg, (cardWidth + cardGap) * i, 208);
-        ctx.drawImage(img, (cardWidth + cardGap) * i, 208);
+        ctx.drawImage(bgImg, ((cardWidth + cardGap) * i) + 700, 0);
+        ctx.drawImage(img, ((cardWidth + cardGap) * i) + 700, 0);
     })
-
 }
