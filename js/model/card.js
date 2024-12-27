@@ -1,10 +1,10 @@
 class Card {
     constructor({
         name = '',
-        imgSrc = '',
+        type = '',
     }){
         this.name = name;
-        this.imgSrc = imgSrc;
+        this.type = type;
     }
 }
 

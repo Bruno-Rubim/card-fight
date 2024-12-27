@@ -15,6 +15,19 @@ const images = {
     rightFootCard: await loadImage('./images/body-card-4.png'),
     redBg: await loadImage('./images/body-bg-red.png'),
     blueBg: await loadImage('./images/body-bg-blue.png'),
+    
+    itemBg: await loadImage('./images/item-cards/bg.png'),
+    combatBoots: await loadImage('./images/item-cards/combat-boots.png'),
+    invisibleGuitar: await loadImage('./images/item-cards/invisible-guitar.png'),
+    
+    creatureBg: await loadImage('./images/creature-cards/bg.png'),
+    colorblindSpider: await loadImage('./images/creature-cards/colorblind-spider.png'),
+    
+    instantBg: await loadImage('./images/instant-cards/bg.png'),
+    prosthetics: await loadImage('./images/instant-cards/prosthetics.png'),
+    
+    reactionBg: await loadImage('./images/reaction-cards/bg.png'),
+    bananaPeel: await loadImage('./images/reaction-cards/bananaPeel.png'),
 };
 
 export default images;
