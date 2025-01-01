@@ -21,7 +21,7 @@ canvases.forEach(canvas => {
     canvas.height = 200
 })
 
-export function drawPlayerCards(player = new Player()){
+export function drawPlayerCards(player = new Player({})){
     const canvas = canvases[player.id];
     const ctx = canvas.getContext('2d');
     BODY_PARTS.forEach((bodyPart, i) => {
@@ -31,6 +31,7 @@ export function drawPlayerCards(player = new Player()){
         ctx.drawImage(bgImg, (cardWidth + cardGap) * i, 0);
         ctx.drawImage(img, (cardWidth + cardGap) * i, 0);
     });
+    console.log(player)
     player.activeCards.forEach((card, i) => {
         const type = card.type
         const bgImg = images[type + 'Bg']

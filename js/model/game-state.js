@@ -8,6 +8,7 @@ class GameState {
                 cards: []
             })
         })
+        this.currentPhase = {}
     }
 }
 
@@ -15,7 +16,7 @@ export default GameState
 
 /*
 
-Different game states
+Different game phases
 
 player turn {
     

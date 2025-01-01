@@ -9,9 +9,9 @@ const combatBoots = new Card({name: 'combatBoots', type: 'item'})
 const prosthetics = new Card({name: 'prosthetics', type: 'instant'}) 
 const colorblindSpider = new Card({name: 'colorblindSpider', type: 'creature'})
 
-const player1 = new Player({id: 0, cards: [combatBoots, prosthetics]})
+const player1 = new Player({id: 0, activeCards: [combatBoots, prosthetics]})
 
-const player2 = new Player({id: 1, cards: [colorblindSpider]})
+const player2 = new Player({id: 1, activeCards: [colorblindSpider]})
 
 gameState.players = [player1, player2]
 
