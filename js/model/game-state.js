@@ -1,3 +1,4 @@
+import { drawPlayerCards } from "../graphics/index.js"
 import Player from "./player.js"
 
 class GameState {
@@ -5,14 +6,18 @@ class GameState {
         this.players = [...Array(2)].map((_, i) => {
             return new Player({
                 id: i,
-                cards: []
+                activeCards: []
             })
         })
-        this.currentPhase = {}
+    }
+    drawPlayers(){
+        this.players.forEach(player => {
+            drawPlayerCards(player)
+        }) 
     }
 }
 
-export default GameState
+export default new GameState()
 
 /*
 
@@ -20,25 +25,25 @@ Different game phases
 
 player turn {
     
-    activate cards from hand (optional)
+    activate/deactivate cards from hand (optional)
     
     draw card options
     
     select card from options
     
-    activate cards from hand (optional)
+    activate/deactivate cards from hand (optional)
     
     select opponent
 
-    take account of victim card effects
+    calculate dice set
 
-    take account of attacker card effects
-
-    roll dice
+    roll dice set
+    
+    reroll impossible hits
     
     reroll dice (optional)
 
-    perform hits/loots
+    perform actions
 
     next player's turn ->
 }
@@ -46,6 +51,7 @@ player turn {
 Card triggers
 
 reaction {
+
     Losing my last body card
 
     Being selected for an attack
