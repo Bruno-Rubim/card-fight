@@ -1,5 +1,4 @@
 import { LEFT_FOOT, RIGHT_FOOT, LEFT_HAND, RIGHT_HAND, FACE } from "../constants.js";
-import Card from "./card.js";
 
 class Player {
     constructor(){

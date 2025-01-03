@@ -1,4 +1,4 @@
-import { drawPlayerCards } from "../graphics/index.js"
+import * as graphics from "../graphics/graphis-index.js"
 import { Attack } from "./combat.js"
 import Player from "./player.js"
 
@@ -11,6 +11,22 @@ class GameState {
             })
         })
     }
+
+    startGame(){
+        this.players.forEach((player)=> {
+            graphics.createPlayerButton(
+                player, 
+                {text: 'attack', funct: ()=>{
+                    graphics.disablePlayerButtons(this.getPlayerTurn(0))
+                    this.startCombat()
+                }}
+            )
+            graphics.disablePlayerButtons(player)
+        })
+        this.drawPlayers()
+        graphics.enablePlayerButtons(this.getPlayerTurn(0))
+    }
+
     turnCounter = 0;
     getPlayerTurn(turnsSkip){
        const coutner = (this.turnCounter + turnsSkip) % this.players.length
@@ -18,7 +34,7 @@ class GameState {
     }
     drawPlayers(){
         this.players.forEach(player => {
-            drawPlayerCards(player)
+            graphics.drawPlayerCards(player)
         })
     }
     startCombat(){
@@ -26,7 +42,7 @@ class GameState {
         attack.performAttack()
         this.turnCounter++;
         this.drawPlayers()
-        setTimeout(() => this.startCombat(), 1000)
+        graphics.enablePlayerButtons(this.getPlayerTurn(0))
     }
 }
 

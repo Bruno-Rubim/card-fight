@@ -63,8 +63,6 @@ export class Attack {
                 this.victim.bodyCards[part] = false
             }
         })
-
-        console.log(this.actionSet)
     }
 }
 

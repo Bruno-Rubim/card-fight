@@ -12,4 +12,4 @@ player2.id = 2;
 
 gameState.players = [player1, player2]
 
-gameState.startCombat()
+gameState.startGame()
