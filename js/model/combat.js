@@ -9,15 +9,16 @@ export class Attack {
     checkImpossibleHits(){
         let setChanged = false;
     
+        console.log(this.actionSet)
+        
         for(const i in BODY_PARTS){
             if (!this.victim.bodyCards[BODY_PARTS[i]] && 
-                this.actionSet[BODY_PARTS[i]] != MISS && 
-                this.actionSet[BODY_PARTS[i]] != CRITICAL_HIT)
-            {
-                rerollHit(this.diceSet, BODY_PARTS[i])
-                setChanged = true;
+                this.actionSet[BODY_PARTS[i]] != MISS)
+                {
+                    rerollHit(this.diceSet, BODY_PARTS[i])
+                    setChanged = true;
+                }
             }
-        }
         return setChanged;
     }
 
@@ -50,6 +51,7 @@ export class Attack {
         this.actionSet[LOOT] = Math.floor(countValueInArray(this.diceSet, LOOT)/2);
         
         if (this.checkImpossibleHits()){
+            console.log('changed')
             this.translateDiceSet()
         }
     }

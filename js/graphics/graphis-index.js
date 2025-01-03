@@ -1,3 +1,5 @@
+import { ATTACK_DICE_FACES } from "../constants.js";
+import { countValueInArray } from "../model/combat.js";
 import Player from "../model/player.js"
 
 export function drawPlayerCards(player = new Player()) {
@@ -5,7 +7,7 @@ export function drawPlayerCards(player = new Player()) {
     div.innerHTML = '';
     for(const part in player.bodyCards) {
         let img = document.createElement("img");
-        img.width = '64'
+        img.width = '96'
         if(player.bodyCards[part]) {
             img.src = "./images/dice-" + part + ".png"
         } else {
@@ -44,4 +46,18 @@ export function enablePlayerButtons(player){
     buttons.forEach(button => {
         button.disabled = false;
     });
+}
+
+export function drawDiceSet(diceSet){
+    const div = document.querySelector('#dice')
+    div.innerHTML = ''
+    ATTACK_DICE_FACES.forEach(face => {
+        const faceCount = countValueInArray(diceSet, face)
+        for (let i = 0; i < faceCount; i++){
+            let img = document.createElement("img");
+            img.width = '64'
+            img.src = "./images/dice-" + face + ".png"
+            div.appendChild(img);
+        }
+    })
 }

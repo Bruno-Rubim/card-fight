@@ -40,6 +40,7 @@ class GameState {
     startCombat(){
         const attack = new Attack({attacker: this.getPlayerTurn(0), victim: this.getPlayerTurn(1)})
         attack.performAttack()
+        graphics.drawDiceSet(attack.diceSet)
         this.turnCounter++;
         this.drawPlayers()
         graphics.enablePlayerButtons(this.getPlayerTurn(0))
