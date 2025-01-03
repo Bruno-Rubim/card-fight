@@ -7,10 +7,10 @@ class Player {
         this.baseDice = 10 //official value is 6
         this.bodyCards = {
             [LEFT_FOOT]: true,
-            [RIGHT_FOOT]: true,
             [LEFT_HAND]: true,
-            [RIGHT_HAND]: true,
             [FACE]: true,
+            [RIGHT_HAND]: true,
+            [RIGHT_FOOT]: true,
         }
     }
 }

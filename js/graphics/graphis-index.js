@@ -1,19 +1,20 @@
 import { ATTACK_DICE_FACES } from "../constants.js";
 import { countValueInArray } from "../model/combat.js";
 import Player from "../model/player.js"
+import { colorList } from "./colors.js";
 
 export function drawPlayerCards(player = new Player()) {
     const div = document.querySelector('#p' + player.id + '-body-cards')
     div.innerHTML = '';
     for(const part in player.bodyCards) {
         let img = document.createElement("img");
-        img.width = '96'
         if(player.bodyCards[part]) {
-            img.src = "./images/dice-" + part + ".png"
+            img.src = "./images/body-card-" + part + ".png"
+            img.style.backgroundColor = colorList[player.id]
         } else {
-            img.src = "./images/bust.png"
+            img.src = "./images/back-card.png"
         }
-        div.appendChild(img);
+            div.appendChild(img);
     }
 }
 

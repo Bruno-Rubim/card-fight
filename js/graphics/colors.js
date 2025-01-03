@@ -1,10 +1,10 @@
 export const colorList = [
+    'orange',
     'blue',
     'red',
     'green',
     'yellow',
     'purple',
-    'orange',
 ]
 
 export const boardBackground = '#444'
