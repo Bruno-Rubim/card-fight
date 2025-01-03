@@ -7,9 +7,9 @@ export function drawPlayerCards(player = new Player()) {
         let img = document.createElement("img");
         img.width = '64'
         if(player.bodyCards[part]) {
-            img.src = "./../../images/dice-" + part + ".png"
+            img.src = "./images/dice-" + part + ".png"
         } else {
-            img.src = "./../../images/bust.png"
+            img.src = "./images/bust.png"
         }
         div.appendChild(img);
     }
