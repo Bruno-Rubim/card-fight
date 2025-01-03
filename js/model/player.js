@@ -5,7 +5,7 @@ class Player {
     constructor(){
         this.id = 0;
         this.activeCards = [];
-        this.baseDice = 6
+        this.baseDice = 10 //official value is 6
         this.bodyCards = {
             [LEFT_FOOT]: true,
             [RIGHT_FOOT]: true,

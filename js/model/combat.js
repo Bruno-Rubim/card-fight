@@ -64,7 +64,6 @@ export class Attack {
             }
         })
 
-        console.log(this)
         console.log(this.actionSet)
     }
 }

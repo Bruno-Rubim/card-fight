@@ -1,4 +1,5 @@
 import { drawPlayerCards } from "../graphics/index.js"
+import { Attack } from "./combat.js"
 import Player from "./player.js"
 
 class GameState {
@@ -10,10 +11,22 @@ class GameState {
             })
         })
     }
+    turnCounter = 0;
+    getPlayerTurn(turnsSkip){
+       const coutner = (this.turnCounter + turnsSkip) % this.players.length
+        return this.players[coutner]
+    }
     drawPlayers(){
         this.players.forEach(player => {
             drawPlayerCards(player)
-        }) 
+        })
+    }
+    startCombat(){
+        const attack = new Attack({attacker: this.getPlayerTurn(0), victim: this.getPlayerTurn(1)})
+        attack.performAttack()
+        this.turnCounter++;
+        this.drawPlayers()
+        setTimeout(() => this.startCombat(), 1000)
     }
 }
 
