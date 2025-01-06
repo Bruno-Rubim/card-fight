@@ -18,37 +18,6 @@ export function drawPlayerCards(player = new Player()) {
     }
 }
 
-export function deletePlayerButtons(player){
-    const div = document.querySelector('#p' + player.id + '-buttons')
-    div.innerHTML = '';
-}
-
-export function createPlayerButton(player, button = {text: '', funct(){}}){
-    const div = document.querySelector('#p' + player.id + '-buttons')
-
-    let newButton = document.createElement("button");
-    newButton.innerHTML = button.text;
-    newButton.onclick = button.funct;
-
-    div.appendChild(newButton);
-}
-
-export function disablePlayerButtons(player){
-    const coll = document.querySelector('#p' + player.id + '-buttons').children
-    const buttons = Array.prototype.slice.call(coll)
-    buttons.forEach(button => {
-        button.disabled = true;
-    });
-}
-
-export function enablePlayerButtons(player){
-    const coll = document.querySelector('#p' + player.id + '-buttons').children
-    const buttons = Array.prototype.slice.call(coll)
-    buttons.forEach(button => {
-        button.disabled = false;
-    });
-}
-
 export function drawDiceSet(diceSet){
     const div = document.querySelector('#dice')
     div.innerHTML = ''

@@ -9,8 +9,6 @@ export class Attack {
     checkImpossibleHits(){
         let setChanged = false;
     
-        console.log(this.actionSet)
-        
         for(const i in BODY_PARTS){
             if (!this.victim.bodyCards[BODY_PARTS[i]] && 
                 this.actionSet[BODY_PARTS[i]] != MISS)
@@ -51,7 +49,6 @@ export class Attack {
         this.actionSet[LOOT] = Math.floor(countValueInArray(this.diceSet, LOOT)/2);
         
         if (this.checkImpossibleHits()){
-            console.log('changed')
             this.translateDiceSet()
         }
     }
@@ -59,12 +56,11 @@ export class Attack {
     performAttack(){
         this.diceSet = rollDiceSet(this.attacker.baseDice);
         this.translateDiceSet();
-        
-        BODY_PARTS.forEach(part => {
-            if (this.actionSet[part] != MISS) {
-                this.victim.bodyCards[part] = false
-            }
-        })
+        // BODY_PARTS.forEach(part => {
+        //     if (this.actionSet[part] != MISS) {
+        //         this.victim.bodyCards[part] = false
+        //     }
+        // })
     }
 }
 

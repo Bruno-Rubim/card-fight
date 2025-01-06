@@ -1,7 +1,5 @@
 import { FACE, LEFT_FOOT, LEFT_HAND, RIGHT_FOOT, RIGHT_HAND } from './constants.js';
-//import './graphics/index.js';
-import { Attack } from './model/combat.js';
-import gameState from './model/game-state.js';
+import gameState from './game-state.js';
 import Player from './model/player.js';
 
 const player1 = new Player()

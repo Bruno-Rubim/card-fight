@@ -1,6 +1,8 @@
-import * as graphics from "../graphics/graphis-index.js"
-import { Attack } from "./combat.js"
-import Player from "./player.js"
+import { BODY_PARTS, CRITICAL_HIT, MISS } from "./constants.js"
+import * as graphics from "./graphics/graphis-index.js"
+import * as buttonManager from "./button-manager.js"
+import { Attack } from "./model/combat.js"
+import Player from "./model/player.js"
 
 class GameState {
     constructor(){
@@ -10,24 +12,14 @@ class GameState {
                 activeCards: []
             })
         })
+        this.turnCounter = 0;
     }
 
     startGame(){
-        this.players.forEach((player)=> {
-            graphics.createPlayerButton(
-                player, 
-                {text: 'attack', funct: ()=>{
-                    graphics.disablePlayerButtons(this.getPlayerTurn(0))
-                    this.startCombat()
-                }}
-            )
-            graphics.disablePlayerButtons(player)
-        })
+        buttonManager.createAttackButton(this.getPlayerTurn(0))
         this.drawPlayers()
-        graphics.enablePlayerButtons(this.getPlayerTurn(0))
     }
 
-    turnCounter = 0;
     getPlayerTurn(turnsSkip){
        const coutner = (this.turnCounter + turnsSkip) % this.players.length
         return this.players[coutner]
@@ -37,13 +29,34 @@ class GameState {
             graphics.drawPlayerCards(player)
         })
     }
+    requestPlayerActions(attack = new Attack()){
+        console.log(attack.actionSet)
+        buttonManager.createActionButtons(attack)
+    }
+    checkPlayerActions(attack = new Attack()){
+        let anyleft = false
+        for(const part in BODY_PARTS){
+            if (attack.actionSet[BODY_PARTS[part]] != MISS &&
+                attack.actionSet[BODY_PARTS[part]] != null 
+            ){
+                anyleft = true;
+            }
+        }
+        if (!anyleft) {
+            this.nextTurn()
+        }
+    }
     startCombat(){
         const attack = new Attack({attacker: this.getPlayerTurn(0), victim: this.getPlayerTurn(1)})
         attack.performAttack()
         graphics.drawDiceSet(attack.diceSet)
-        this.turnCounter++;
+        this.checkPlayerActions(attack)
+        this.requestPlayerActions(attack)
         this.drawPlayers()
-        graphics.enablePlayerButtons(this.getPlayerTurn(0))
+    }
+    nextTurn(){
+        this.turnCounter++
+        buttonManager.createAttackButton(this.getPlayerTurn(0))
     }
 }
 
