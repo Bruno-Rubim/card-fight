@@ -108,6 +108,7 @@ export class Attack {
         this.currentHitBodyPart = bodyPart,
         this.currentHitFace = face,
         this.currentHitType = type
+        this.currentHitCancel = false
         this.checkPlayerCardConditions(this.victim, 'been-hit')
         this.diceSet = removeAllValueFromArray(this.diceSet, face)
         if (!this.currentHitCancel){
