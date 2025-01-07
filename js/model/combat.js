@@ -14,7 +14,7 @@ import {
 } from "../constants.js";
 import { countValueInArray, removeAllValueFromArray } from "../general-commands.js";
 import * as buttonManager from "../button-manager.js"
-import * as graphics from "../graphics/graphis-index.js"
+import * as graphics from "../graphics/index.js"
 import gameState from "../game-state.js";
 import Player from "./player.js";
 
@@ -23,7 +23,7 @@ export class Attack {
         this.attacker = attacker
         this.victim = victim
         this.diceSet = diceSet
-        this.reroll = 10 // official is 0
+        this.reroll = 0 // official is 0
         this.actionSet = actionSet
     }
 
@@ -95,6 +95,7 @@ export class Attack {
     handleHit(bodyPart, face = bodyPart){
         this.diceSet = removeAllValueFromArray(this.diceSet, face)
         this.victim.bodyCards[bodyPart] = false;
+        this.checkPlayerCardConditions(this.attacker, 'strike-hit')
         this.handleAction()
     }
 
@@ -102,6 +103,14 @@ export class Attack {
         rerollDie(this.diceSet, face);
         this.reroll--
         this.handleAction()
+    }
+
+    checkPlayerCardConditions(player = new Player(), condition = ''){
+        for (let i = 0; i < player.activeCards.length; i++){
+            if (player.activeCards[i].condition == condition) {
+                player.activeCards[i].effect()
+            }
+        }
     }
 }
 
@@ -115,6 +124,12 @@ export function rollDiceSet(setSize){
         set.push(rollDie());
     }
     return set;
+}
+
+export function addDice(diceSet, ammount){
+    for(let i = 0; i < ammount; i++){
+        diceSet.push(rollDie());
+    }
 }
 
 export function rerollDie(diceSet, face){
@@ -131,11 +146,5 @@ export function rerollHit(diceSet, face){
         if (diceSet[i] == face) {
             diceSet[i] = rollDie()
         }
-    }
-}
-
-export function addDice(diceSet, ammount){
-    for(let i = 0; i < ammount; i++){
-        diceSet.push(rollDie());
     }
 }

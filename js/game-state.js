@@ -1,5 +1,5 @@
 import { BODY_PARTS, MISS } from "./constants.js"
-import * as graphics from "./graphics/graphis-index.js"
+import * as graphics from "./graphics/index.js"
 import * as buttonManager from "./button-manager.js"
 import { Attack } from "./model/combat.js"
 import Player from "./model/player.js"
@@ -13,6 +13,7 @@ class GameState {
             })
         })
         this.turnCounter = 0;
+        this.currentAttack = new Attack({})
     }
 
     startGame(){
@@ -24,20 +25,32 @@ class GameState {
        const coutner = (this.turnCounter + turnsSkip) % this.players.length
         return this.players[coutner]
     }
+
     drawPlayers(){
         this.players.forEach(player => {
             graphics.drawPlayerCards(player)
         })
     }
-    requestPlayerActions(attack = new Attack()){
-        attack.translateDiceSet()
-        buttonManager.createActionButtons(attack)
+
+    startCombat(){
+        this.currentAttack = new Attack({attacker: this.getPlayerTurn(0), victim: this.getPlayerTurn(1)})
+        this.currentAttack.performAttack()
+        graphics.drawDiceSet(this.currentAttack.diceSet)
+        this.checkPlayerActions(this.currentAttack)
+        this.requestPlayerActions(this.currentAttack)
+        this.drawPlayers()
     }
-    checkPlayerActions(attack = new Attack()){
+
+    requestPlayerActions(){
+        this.currentAttack.translateDiceSet()
+        buttonManager.createActionButtons(this.currentAttack)
+    }
+
+    checkPlayerActions(){
         let anyleft = false
         for(const part in BODY_PARTS){
-            if (attack.actionSet[BODY_PARTS[part]] != MISS &&
-                attack.actionSet[BODY_PARTS[part]] != null 
+            if (this.currentAttack.actionSet[BODY_PARTS[part]] != MISS &&
+                this.currentAttack.actionSet[BODY_PARTS[part]] != null 
             ){
                 anyleft = true;
             }
@@ -46,17 +59,11 @@ class GameState {
             buttonManager.createEndAttackButton(this.getPlayerTurn(0))
         }
     }
-    startCombat(){
-        const attack = new Attack({attacker: this.getPlayerTurn(0), victim: this.getPlayerTurn(1)})
-        attack.performAttack()
-        graphics.drawDiceSet(attack.diceSet)
-        this.checkPlayerActions(attack)
-        this.requestPlayerActions(attack)
-        this.drawPlayers()
-    }
+
     nextTurn(){
 
     }
+
 }
 
 export default new GameState()

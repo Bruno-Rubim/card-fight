@@ -1,7 +1,7 @@
 import { BODY_PARTS, CRITICAL_HIT, MISS, ATTACK_DICE_FACES } from "./constants.js";
 import { Attack, rerollDie } from "./model/combat.js";
 import gameState from "./game-state.js";
-import * as graphics from "./graphics/graphis-index.js"
+import * as graphics from "./graphics/index.js"
 import { countValueInArray, removeAllValueFromArray } from "./general-commands.js";
 
 export function deletePlayerButtons(player){

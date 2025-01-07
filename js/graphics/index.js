@@ -1,7 +1,7 @@
 import { ATTACK_DICE_FACES } from "../constants.js";
 import { countValueInArray } from "../general-commands.js";
 import Player from "../model/player.js"
-import { colorList } from "./colors.js";
+import { colorHex, colorList } from "./colors.js";
 
 export function drawPlayerCards(player = new Player()) {
     const div = document.querySelector('#p' + player.id + '-body-cards')
@@ -10,11 +10,18 @@ export function drawPlayerCards(player = new Player()) {
         let img = document.createElement("img");
         if(player.bodyCards[part]) {
             img.src = "./images/body-card-" + part + ".png"
-            img.style.backgroundColor = colorList[player.id]
+            img.style.backgroundColor = colorHex[colorList[player.id]]
         } else {
             img.src = "./images/back-card.png"
         }
             div.appendChild(img);
+    }
+    for (let i = 0; i < player.activeCards.length; i++) {
+        const card = player.activeCards[i]
+        let img = document.createElement("img");
+        img.src = "./images/" + card.type + "-cards/" + card.name + ".png"
+        img.style.backgroundColor = colorHex[card.type]
+        div.appendChild(img);
     }
 }
 
