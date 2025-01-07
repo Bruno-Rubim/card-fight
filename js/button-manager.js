@@ -1,21 +1,12 @@
-import { ATTACK_DICE_FACES, BODY_PARTS, CRITICAL_HIT, MISS } from "./constants.js";
+import { BODY_PARTS, CRITICAL_HIT, MISS, ATTACK_DICE_FACES } from "./constants.js";
+import { Attack, rerollDie } from "./model/combat.js";
 import gameState from "./game-state.js";
 import * as graphics from "./graphics/graphis-index.js"
-import { Attack, countValueInArray, rerollDie } from "./model/combat.js";
+import { countValueInArray, removeAllValueFromArray } from "./general-commands.js";
 
 export function deletePlayerButtons(player){
     const div = document.querySelector('#p' + player.id + '-buttons')
     div.innerHTML = '';
-}
-
-export function createPlayerButton(player, button = {text: '', type: '', funct(){}}){
-    const div = document.querySelector('#p' + player.id + '-buttons')
-
-    let newButton = document.createElement(button.type);
-    newButton.innerHTML = button.text;
-    newButton.onclick = button.funct;
-
-    div.appendChild(newButton);
 }
 
 export function createAttackButton(player){
@@ -33,6 +24,23 @@ export function createAttackButton(player){
     div.appendChild(newButton);
 }
 
+export function createEndAttackButton(player){
+    const div = document.querySelector('#p' + player.id + '-buttons')
+    
+    let newButton = document.createElement("button");
+    newButton.id = "p" + player.id + "-end-attack-button"
+    newButton.innerHTML = "End Attack";
+    function funct(){
+        deletePlayerButtons(gameState.getPlayerTurn(0))
+        gameState.turnCounter++
+        createAttackButton(gameState.getPlayerTurn(0))
+        graphics.drawDiceSet([])
+    }   
+    newButton.onclick = funct;
+
+    div.appendChild(newButton);
+}
+
 export function createHitButton(attack = new Attack(), bodyPart){
     const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
     
@@ -40,12 +48,7 @@ export function createHitButton(attack = new Attack(), bodyPart){
     newButton.id = "p" + attack.attacker.id + "-" + bodyPart + "-button"
     newButton.innerHTML = bodyPart;
     function funct(){
-        attack.victim.bodyCards[bodyPart] = false;
-        graphics.drawPlayerCards(attack.victim)
-        attack.actionSet[bodyPart] = null
-        deletePlayerButtons(attack.attacker)
-        gameState.checkPlayerActions(attack)
-        gameState.requestPlayerActions(attack)
+        attack.handleHit(bodyPart)
     }
     newButton.onclick = funct;
     div.appendChild(newButton);
@@ -84,12 +87,7 @@ export function createCriticalButton(attack = new Attack(), bodyPart){
         }
     }
     function funct(){
-        attack.victim.bodyCards[newSelect.value] = false;
-        graphics.drawPlayerCards(attack.victim)
-        attack.actionSet[bodyPart] = null
-        deletePlayerButtons(attack.attacker)
-        gameState.checkPlayerActions(attack)
-        gameState.requestPlayerActions(attack)
+        attack.handleHit(newSelect.value, bodyPart)
     }
     newSelect.onchange = funct;
     div.appendChild(newSelect);
@@ -113,12 +111,7 @@ export function createRerollButton(attack = new Attack()){
         }
     }
     function funct(){
-        rerollDie(attack.diceSet, newSelect.value);
-        attack.reroll--
-        deletePlayerButtons(attack.attacker)
-        graphics.drawDiceSet(attack.diceSet);
-        gameState.checkPlayerActions(attack);
-        gameState.requestPlayerActions(attack);
+        attack.handleReroll(newSelect.value)
     }
     newSelect.onchange = funct;
     div.appendChild(newSelect);

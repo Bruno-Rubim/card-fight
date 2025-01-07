@@ -1,5 +1,5 @@
 import { ATTACK_DICE_FACES } from "../constants.js";
-import { countValueInArray } from "../model/combat.js";
+import { countValueInArray } from "../general-commands.js";
 import Player from "../model/player.js"
 import { colorList } from "./colors.js";
 

@@ -12,7 +12,10 @@ import {
     LIGHT_HIT, 
     BODY_PARTS 
 } from "../constants.js";
-
+import { countValueInArray, removeAllValueFromArray } from "../general-commands.js";
+import * as buttonManager from "../button-manager.js"
+import * as graphics from "../graphics/graphis-index.js"
+import gameState from "../game-state.js";
 import Player from "./player.js";
 
 export class Attack {
@@ -20,7 +23,7 @@ export class Attack {
         this.attacker = attacker
         this.victim = victim
         this.diceSet = diceSet
-        this.reroll = 3 // official is 0
+        this.reroll = 10 // official is 0
         this.actionSet = actionSet
     }
 
@@ -70,19 +73,36 @@ export class Attack {
         if (this.checkImpossibleHits()){
             this.translateDiceSet()
         }
-        console.log(this.actionSet);
     }
 
     performAttack(){
         this.diceSet = rollDiceSet(this.attacker.baseDice);
         this.translateDiceSet();
     }
-}
 
-export function countValueInArray(array, value) {
-    let count = 0;
-    array.forEach((v) => (v === value && count++));
-    return count;
+    handleAction(){
+        this.translateDiceSet()
+
+        graphics.drawPlayerCards(this.victim)
+        
+        buttonManager.deletePlayerButtons(this.attacker)
+        
+        gameState.checkPlayerActions(this)
+        gameState.requestPlayerActions(this)
+        graphics.drawDiceSet(this.diceSet)
+    }
+
+    handleHit(bodyPart, face = bodyPart){
+        this.diceSet = removeAllValueFromArray(this.diceSet, face)
+        this.victim.bodyCards[bodyPart] = false;
+        this.handleAction()
+    }
+
+    handleReroll(face){
+        rerollDie(this.diceSet, face);
+        this.reroll--
+        this.handleAction()
+    }
 }
 
 export function rollDie(){

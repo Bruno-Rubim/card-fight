@@ -11,3 +11,7 @@ body {
 img {
     image-rendering: pixelated;
 }
+
+#dice {
+    text-align: center;
+}

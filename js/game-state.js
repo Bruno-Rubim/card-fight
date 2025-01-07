@@ -43,7 +43,7 @@ class GameState {
             }
         }
         if (!anyleft) {
-            this.nextTurn()
+            buttonManager.createEndAttackButton(this.getPlayerTurn(0))
         }
     }
     startCombat(){
@@ -55,9 +55,7 @@ class GameState {
         this.drawPlayers()
     }
     nextTurn(){
-        buttonManager.deletePlayerButtons(this.getPlayerTurn(0))
-        this.turnCounter++
-        buttonManager.createAttackButton(this.getPlayerTurn(0))
+
     }
 }
 
