@@ -25,6 +25,10 @@ export class Attack {
         this.diceSet = diceSet
         this.reroll = 0 // official is 0
         this.actionSet = actionSet
+        this.currentHitType = ''
+        this.currentHitFace = ''
+        this.currentHitBodyPart = ''
+        this.currentHitCancel = false
     }
 
     checkImpossibleHits(){
@@ -80,6 +84,14 @@ export class Attack {
         this.translateDiceSet();
     }
 
+    checkPlayerCardConditions(player = new Player(), condition = ''){
+        for (let i = 0; i < player.activeCards.length; i++){
+            if (player.activeCards[i].condition == condition) {
+                player.activeCards[i].effect(this)
+            }
+        }
+    }
+
     handleAction(){
         this.translateDiceSet()
 
@@ -92,10 +104,16 @@ export class Attack {
         graphics.drawDiceSet(this.diceSet)
     }
 
-    handleHit(bodyPart, face = bodyPart){
+    handleHit(bodyPart, type, face = bodyPart){
+        this.currentHitBodyPart = bodyPart,
+        this.currentHitFace = face,
+        this.currentHitType = type
+        this.checkPlayerCardConditions(this.victim, 'been-hit')
         this.diceSet = removeAllValueFromArray(this.diceSet, face)
-        this.victim.bodyCards[bodyPart] = false;
-        this.checkPlayerCardConditions(this.attacker, 'strike-hit')
+        if (!this.currentHitCancel){
+            this.victim.bodyCards[bodyPart] = false;
+            this.checkPlayerCardConditions(this.attacker, 'strike-hit')
+        }
         this.handleAction()
     }
 
@@ -103,14 +121,6 @@ export class Attack {
         rerollDie(this.diceSet, face);
         this.reroll--
         this.handleAction()
-    }
-
-    checkPlayerCardConditions(player = new Player(), condition = ''){
-        for (let i = 0; i < player.activeCards.length; i++){
-            if (player.activeCards[i].condition == condition) {
-                player.activeCards[i].effect()
-            }
-        }
     }
 }
 

@@ -13,7 +13,7 @@ class GameState {
             })
         })
         this.turnCounter = 0;
-        this.currentAttack = new Attack({})
+        this.currentAttack;
     }
 
     startGame(){

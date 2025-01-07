@@ -1,4 +1,4 @@
-import { BODY_PARTS, CRITICAL_HIT, MISS, ATTACK_DICE_FACES } from "./constants.js";
+import { BODY_PARTS, CRITICAL_HIT, MISS, ATTACK_DICE_FACES, HEAVY_HIT, LIGHT_HIT } from "./constants.js";
 import { Attack, rerollDie } from "./model/combat.js";
 import gameState from "./game-state.js";
 import * as graphics from "./graphics/index.js"
@@ -41,56 +41,57 @@ export function createEndAttackButton(player){
     div.appendChild(newButton);
 }
 
-export function createHitButton(attack = new Attack(), bodyPart){
+export function createHitButton(attack = new Attack(), type = '', bodyPart){
     const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
     
-    let newButton = document.createElement("button");
-    newButton.id = "p" + attack.attacker.id + "-" + bodyPart + "-button"
-    newButton.innerHTML = bodyPart;
-    function funct(){
-        attack.handleHit(bodyPart)
+    if (type == CRITICAL_HIT) {
+        let newSelect = document.createElement("select");
+        newSelect.id = "p" + attack.attacker.id + "-critical-button";
+        let defaultOption = document.createElement("option");
+        defaultOption.innerHTML = "Critcal";
+        newSelect.appendChild(defaultOption);
+    
+        for (const part in BODY_PARTS){
+            if (attack.victim.bodyCards[BODY_PARTS[part]]){
+                let option = document.createElement("option");
+                option.value = BODY_PARTS[part];
+                option.innerHTML = BODY_PARTS[part];
+                newSelect.appendChild(option);
+            }
+        }
+        function funct(){
+            attack.handleHit(newSelect.value, type, bodyPart)
+        }
+        newSelect.onchange = funct;
+        div.appendChild(newSelect);
+    } else {
+        let newButton = document.createElement("button");
+        newButton.id = "p" + attack.attacker.id + "-" + bodyPart + "-button"
+        newButton.innerHTML = bodyPart;
+        function funct(){
+            attack.handleHit(bodyPart, type)
+        }
+        newButton.onclick = funct;
+        div.appendChild(newButton);
     }
-    newButton.onclick = funct;
-    div.appendChild(newButton);
 }
 
 export function createActionButtons(attack = new Attack()){
     for(const partId in BODY_PARTS){
         const part = BODY_PARTS[partId]
         if (attack.actionSet[part] == CRITICAL_HIT){
-            createCriticalButton(attack, part)
-        } else if (attack.actionSet[part] != MISS &&
-                attack.actionSet[part] != null){
-            createHitButton(attack, part)
+            createHitButton(attack, CRITICAL_HIT, part)
+        } else if (attack.actionSet[part] == HEAVY_HIT &&
+            attack.actionSet[part] != null){
+            createHitButton(attack, HEAVY_HIT, part)
+        } else if (attack.actionSet[part] == LIGHT_HIT &&
+            attack.actionSet[part] != null){
+            createHitButton(attack, LIGHT_HIT, part)
         }
     }
     if (attack.reroll > 0) {
         createRerollButton(attack)
     }
-}
-
-export function createCriticalButton(attack = new Attack(), bodyPart){
-    const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
-    
-    let newSelect = document.createElement("select");
-    newSelect.id = "p" + attack.attacker.id + "-critical-button";
-    let defaultOption = document.createElement("option");
-    defaultOption.innerHTML = "Critcal";
-    newSelect.appendChild(defaultOption);
-
-    for (const part in BODY_PARTS){
-        if (attack.victim.bodyCards[BODY_PARTS[part]]){
-            let option = document.createElement("option");
-            option.value = BODY_PARTS[part];
-            option.innerHTML = BODY_PARTS[part];
-            newSelect.appendChild(option);
-        }
-    }
-    function funct(){
-        attack.handleHit(newSelect.value, bodyPart)
-    }
-    newSelect.onchange = funct;
-    div.appendChild(newSelect);
 }
 
 export function createRerollButton(attack = new Attack()){
