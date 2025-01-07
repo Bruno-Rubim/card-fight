@@ -1,4 +1,4 @@
-import { BODY_PARTS, CRITICAL_HIT, MISS } from "./constants.js"
+import { BODY_PARTS, MISS } from "./constants.js"
 import * as graphics from "./graphics/graphis-index.js"
 import * as buttonManager from "./button-manager.js"
 import { Attack } from "./model/combat.js"
@@ -30,7 +30,7 @@ class GameState {
         })
     }
     requestPlayerActions(attack = new Attack()){
-        console.log(attack.actionSet)
+        attack.translateDiceSet()
         buttonManager.createActionButtons(attack)
     }
     checkPlayerActions(attack = new Attack()){
@@ -55,6 +55,7 @@ class GameState {
         this.drawPlayers()
     }
     nextTurn(){
+        buttonManager.deletePlayerButtons(this.getPlayerTurn(0))
         this.turnCounter++
         buttonManager.createAttackButton(this.getPlayerTurn(0))
     }

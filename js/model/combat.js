@@ -1,8 +1,26 @@
+import { 
+    ATTACK_DICE_FACES, 
+    LEFT_FOOT, 
+    RIGHT_FOOT, 
+    LEFT_HAND, 
+    RIGHT_HAND, 
+    FACE, 
+    MISS, 
+    LOOT, 
+    CRITICAL_HIT, 
+    HEAVY_HIT, 
+    LIGHT_HIT, 
+    BODY_PARTS 
+} from "../constants.js";
+
+import Player from "./player.js";
+
 export class Attack {
     constructor({attacker = new Player(), victim = new Player(), diceSet = [], actionSet = []}){
         this.attacker = attacker
         this.victim = victim
         this.diceSet = diceSet
+        this.reroll = 3 // official is 0
         this.actionSet = actionSet
     }
 
@@ -11,7 +29,8 @@ export class Attack {
     
         for(const i in BODY_PARTS){
             if (!this.victim.bodyCards[BODY_PARTS[i]] && 
-                this.actionSet[BODY_PARTS[i]] != MISS)
+                this.actionSet[BODY_PARTS[i]] != MISS && 
+                this.actionSet[BODY_PARTS[i]] != CRITICAL_HIT)
                 {
                     rerollHit(this.diceSet, BODY_PARTS[i])
                     setChanged = true;
@@ -51,35 +70,14 @@ export class Attack {
         if (this.checkImpossibleHits()){
             this.translateDiceSet()
         }
+        console.log(this.actionSet);
     }
 
     performAttack(){
         this.diceSet = rollDiceSet(this.attacker.baseDice);
         this.translateDiceSet();
-        // BODY_PARTS.forEach(part => {
-        //     if (this.actionSet[part] != MISS) {
-        //         this.victim.bodyCards[part] = false
-        //     }
-        // })
     }
 }
-
-import { 
-    ATTACK_DICE_FACES, 
-    LEFT_FOOT, 
-    RIGHT_FOOT, 
-    LEFT_HAND, 
-    RIGHT_HAND, 
-    FACE, 
-    MISS, 
-    LOOT, 
-    CRITICAL_HIT, 
-    HEAVY_HIT, 
-    LIGHT_HIT, 
-    BODY_PARTS 
-} from "../constants.js";
-
-import Player from "./player.js";
 
 export function countValueInArray(array, value) {
     let count = 0;
@@ -99,13 +97,21 @@ export function rollDiceSet(setSize){
     return set;
 }
 
+export function rerollDie(diceSet, face){
+    for(const i in diceSet) {
+        if (diceSet[i] == face) {
+            diceSet[i] = rollDie()
+            break
+        }
+    }
+}
+
 export function rerollHit(diceSet, face){
     for(const i in diceSet) {
         if (diceSet[i] == face) {
             diceSet[i] = rollDie()
         }
     }
-    return ATTACK_DICE_FACES[Math.floor(Math.random() * 6)]
 }
 
 export function addDice(diceSet, ammount){

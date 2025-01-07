@@ -1,7 +1,7 @@
-import { BODY_PARTS, CRITICAL_HIT, MISS } from "./constants.js";
+import { ATTACK_DICE_FACES, BODY_PARTS, CRITICAL_HIT, MISS } from "./constants.js";
 import gameState from "./game-state.js";
 import * as graphics from "./graphics/graphis-index.js"
-import { Attack } from "./model/combat.js";
+import { Attack, countValueInArray, rerollDie } from "./model/combat.js";
 
 export function deletePlayerButtons(player){
     const div = document.querySelector('#p' + player.id + '-buttons')
@@ -19,7 +19,6 @@ export function createPlayerButton(player, button = {text: '', type: '', funct()
 }
 
 export function createAttackButton(player){
-    console.log('creating attack btn')
     const div = document.querySelector('#p' + player.id + '-buttons')
     
     let newButton = document.createElement("button");
@@ -55,13 +54,15 @@ export function createHitButton(attack = new Attack(), bodyPart){
 export function createActionButtons(attack = new Attack()){
     for(const partId in BODY_PARTS){
         const part = BODY_PARTS[partId]
-        console.log(attack.actionSet[part])
         if (attack.actionSet[part] == CRITICAL_HIT){
             createCriticalButton(attack, part)
         } else if (attack.actionSet[part] != MISS &&
                 attack.actionSet[part] != null){
             createHitButton(attack, part)
         }
+    }
+    if (attack.reroll > 0) {
+        createRerollButton(attack)
     }
 }
 
@@ -71,7 +72,6 @@ export function createCriticalButton(attack = new Attack(), bodyPart){
     let newSelect = document.createElement("select");
     newSelect.id = "p" + attack.attacker.id + "-critical-button";
     let defaultOption = document.createElement("option");
-    defaultOption.value = "critcal";
     defaultOption.innerHTML = "Critcal";
     newSelect.appendChild(defaultOption);
 
@@ -90,6 +90,35 @@ export function createCriticalButton(attack = new Attack(), bodyPart){
         deletePlayerButtons(attack.attacker)
         gameState.checkPlayerActions(attack)
         gameState.requestPlayerActions(attack)
+    }
+    newSelect.onchange = funct;
+    div.appendChild(newSelect);
+}
+
+export function createRerollButton(attack = new Attack()){
+    const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
+    
+    let newSelect = document.createElement("select");
+    newSelect.id = "p" + attack.attacker.id + "-reroll-button";
+    let defaultOption = document.createElement("option");
+    defaultOption.innerHTML = "Reroll (" + attack.reroll + ")";
+    newSelect.appendChild(defaultOption);
+
+    for (const face in ATTACK_DICE_FACES){
+        if (countValueInArray(attack.diceSet, ATTACK_DICE_FACES[face]) > 0){
+            let option = document.createElement("option");
+            option.value = ATTACK_DICE_FACES[face];
+            option.innerHTML = ATTACK_DICE_FACES[face];
+            newSelect.appendChild(option);
+        }
+    }
+    function funct(){
+        rerollDie(attack.diceSet, newSelect.value);
+        attack.reroll--
+        deletePlayerButtons(attack.attacker)
+        graphics.drawDiceSet(attack.diceSet);
+        gameState.checkPlayerActions(attack);
+        gameState.requestPlayerActions(attack);
     }
     newSelect.onchange = funct;
     div.appendChild(newSelect);
