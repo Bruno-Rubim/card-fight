@@ -25,6 +25,7 @@ export class Attack {
         this.victim = victim
         this.diceSet = diceSet
         this.actionSet = actionSet
+        this.selectedFace = ''
         this.currentHitType = ''
         this.currentHitFace = ''
         this.currentHitBodyPart = ''
@@ -49,7 +50,7 @@ export class Attack {
         return setChanged;
     }
 
-    translateDiceSet(){
+    translateDiceToActions(){
         let minLight = 3;
         let minHeavy = 4;
         let minCritical = 5;
@@ -69,12 +70,12 @@ export class Attack {
                 this.actionSet[ATTACK_DICE_FACES[i]] = HEAVY_HIT;
             } else if (amount >= minLight) {
                 this.actionSet[ATTACK_DICE_FACES[i]] = LIGHT_HIT;
-            } else [
+            } else {
                 this.actionSet[ATTACK_DICE_FACES[i]] = MISS
-            ]
+            }
         }
         if (this.checkImpossibleHits()){
-            this.translateDiceSet()
+            this.translateDiceToActions()
         }
         this.actionSet[LOOT] = Math.floor(countValueInArray(this.diceSet, LOOT)/2);
     }
@@ -82,7 +83,7 @@ export class Attack {
     performAttack(){
         this.checkPlayerCardConditions(this.attacker, 'calculate-dice')
         this.diceSet = rollDiceSet(this.attacker.baseDice + this.additionalDice);
-        this.translateDiceSet();
+        this.translateDiceToActions();
     }
 
     checkPlayerCardConditions(player = new Player(), condition = ''){
@@ -95,27 +96,32 @@ export class Attack {
     }
 
     handleAction(){
-        this.translateDiceSet()
+        this.translateDiceToActions()
 
         graphics.drawPlayerCards(this.victim)
         graphics.drawPlayerCards(this.attacker)
         
         buttonManager.deletePlayerButtons(this.attacker)
+        buttonManager.deleteSelection(this)
+
+        buttonManager.translateDiceButtons(this)
         
         gameState.checkPlayerActions(this)
         gameState.requestPlayerActions(this)
         graphics.drawDiceSet(this.diceSet)
     }
 
-    handleHitBody(target, type, face = target){
-        this.currentHitBodyPart = target
+    handleHitBody(targetCard, type, face = targetCard){
+        this.currentHitBodyPart = targetCard
         this.currentHitFace = face
         this.currentHitType = type
         this.currentHitCancel = false
         this.checkPlayerCardConditions(this.victim, 'hit-attempt')
+        console.log(this.diceSet)
         this.diceSet = removeAllValueFromArray(this.diceSet, face)
+        console.log(this.diceSet)
         if (!this.currentHitCancel){
-            this.victim.bodyCards[target] = false;
+            this.victim.bodyCards[targetCard] = false;
             this.hitsStruck++
             this.checkPlayerCardConditions(this.victim, 'been-hit')
             this.checkPlayerCardConditions(this.attacker, 'strike-hit')

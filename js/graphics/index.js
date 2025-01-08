@@ -26,15 +26,15 @@ export function drawPlayerCards(player = new Player()) {
 }
 
 export function drawDiceSet(diceSet){
-    const div = document.querySelector('#dice')
-    div.innerHTML = ''
-    ATTACK_DICE_FACES.forEach(face => {
-        const faceCount = countValueInArray(diceSet, face)
-        for (let i = 0; i < faceCount; i++){
-            let img = document.createElement("img");
-            img.width = '64'
-            img.src = "./images/dice-" + face + ".png"
-            div.appendChild(img);
-        }
-    })
+    // const div = document.querySelector('#dice')
+    // div.innerHTML = ''
+    // ATTACK_DICE_FACES.forEach(face => {
+    //     const faceCount = countValueInArray(diceSet, face)
+    //     for (let i = 0; i < faceCount; i++){
+    //         let img = document.createElement("img");
+    //         img.width = '64'
+    //         img.src = "./images/dice-" + face + ".png"
+    //         div.appendChild(img);
+    //     }
+    // })
 }

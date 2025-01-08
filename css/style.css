@@ -13,5 +13,17 @@ img {
 }
 
 #dice {
+    height: 64px; 
+    padding: 32px; 
+    background-color: #111;
     text-align: center;
+}
+.buttons {
+    height: 32px; 
+}
+.selection {
+    height: 32px; 
+}
+.faded {
+    opacity: 0.5;
 }

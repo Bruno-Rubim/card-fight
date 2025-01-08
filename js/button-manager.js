@@ -2,7 +2,6 @@ import { BODY_PARTS, CRITICAL_HIT, MISS, ATTACK_DICE_FACES, HEAVY_HIT, LIGHT_HIT
 import { Attack } from "./model/attack.js";
 import gameState from "./game-state.js";
 import { countValueInArray, removeAllValueFromArray } from "./general-commands.js";
-import Card from "./model/card.js";
 
 export function deletePlayerButtons(player){
     const div = document.querySelector('#p' + player.id + '-buttons')
@@ -38,8 +37,110 @@ export function createEndAttackButton(player){
     div.appendChild(newButton);
 }
 
-export function createHitButton(attack = new Attack(), type = '', bodyPart){
-    const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
+export function createRerollButton(attack = new Attack()){
+    // const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
+    
+    // let newSelect = document.createElement("select");
+    // newSelect.id = "p" + attack.attacker.id + "-reroll-button";
+    // let defaultOption = document.createElement("option");
+    // defaultOption.innerHTML = "Reroll (" + attack.actionSet.reroll + ")";
+    // newSelect.appendChild(defaultOption);
+
+    // for (const face in ATTACK_DICE_FACES){
+    //     if (countValueInArray(attack.diceSet, ATTACK_DICE_FACES[face]) > 0){
+    //         let option = document.createElement("option");
+    //         option.value = ATTACK_DICE_FACES[face];
+    //         option.innerHTML = ATTACK_DICE_FACES[face];
+    //         newSelect.appendChild(option);
+    //     }
+    // }
+    // function funct(){
+    //     attack.handleReroll(newSelect.value)
+    // }
+    // newSelect.onchange = funct;
+    // div.appendChild(newSelect);
+}
+
+export function deleteDiceButtons(attack = new Attack()){
+    const div = document.querySelector('#dice')
+    div.innerHTML = ''
+}
+
+export function translateDiceButtons(attack = new Attack()){
+    const div = document.querySelector('#dice')
+    div.innerHTML = ''
+    ATTACK_DICE_FACES.forEach(face => {
+        let faceGroup;
+        if (attack.actionSet[face] == MISS ||
+            attack.actionSet[face] == 0
+        ){
+            faceGroup = document.createElement("b");
+            faceGroup.classList.add('faded')
+        } else {
+            faceGroup = document.createElement("button");
+            faceGroup.id = face + "-button"
+        }
+        let i = 0
+            let n = countValueInArray(attack.diceSet, face)
+            while (i < n){
+                let img = document.createElement("img");
+                img.width = '64'
+                img.src = "./images/dice-" + face + ".png"
+                faceGroup.appendChild(img);
+                function funct(){
+                    createSelection(attack, face)
+                }   
+                faceGroup.onclick = funct;
+                i++
+            div.appendChild(faceGroup);
+        }
+    })
+}
+
+export function deleteSelection(attack = new Attack()){
+    const selection = document.querySelector("#p" + attack.attacker.id + "-selection")
+    selection.innerHTML = 'Action selection'
+    const buttons = document.querySelector("#p" + attack.attacker.id + "-buttons")
+    buttons.innerHTML = ''
+}
+
+export function createSelection(attack = new Attack(), face){
+    const selection = document.querySelector("#p" + attack.attacker.id + "-selection")
+    selection.innerHTML = ''
+    const buttons = document.querySelector("#p" + attack.attacker.id + "-buttons")
+    buttons.innerHTML = ''
+    const selected = document.createElement('i')
+    selection.appendChild(selected)
+    selected.id = ('p' + attack.attacker.id + '-selected')
+    selected.innerHTML = attack.actionSet[face];
+
+    if (face == LOOT) {
+        const itemCards = []
+        for (let i = 0; i < attack.victim.activeCards.length; i++){
+            const card  = attack.victim.activeCards[i];
+            if (card.type == 'item'){
+                itemCards.push(card)
+            }
+        }
+
+        if (itemCards.length == 0) {
+            console.log(attack.actionSet)
+            return
+        }
+
+        for (let i = 0; i < itemCards.length; i++){
+            const newButton = document.createElement("button");
+            newButton.value = itemCards[i].name;
+            newButton.innerHTML = itemCards[i].name;
+            buttons.appendChild(newButton);
+            function funct () {
+                attack.handleLoot(newButton.value)
+            }
+            newButton.onclick = funct;
+        }
+        return
+    }
+
     const creatureCards = []
     for (let i = 0; i < attack.victim.activeCards.length; i++){
         const card  = attack.victim.activeCards[i];
@@ -48,149 +149,43 @@ export function createHitButton(attack = new Attack(), type = '', bodyPart){
         }
     }
     
-    if (type == CRITICAL_HIT) {
-        let newSelect = document.createElement("select");
-        newSelect.id = "p" + attack.attacker.id + "-critical-button";
-        let defaultOption = document.createElement("option");
-        defaultOption.innerHTML = "Critcal";
-        newSelect.appendChild(defaultOption);
-    
-        for (const part in BODY_PARTS){
-            if (attack.victim.bodyCards[BODY_PARTS[part]]){
-                let option = document.createElement("option");
-                option.value = BODY_PARTS[part];
-                option.innerHTML = BODY_PARTS[part];
-                newSelect.appendChild(option);
-            }
-        }
+    const type = attack.actionSet[face];
 
-        for (let i = 0; i < creatureCards.length; i++){
-            let option = document.createElement("option");
-            option.value = creatureCards[i].name;
-            option.innerHTML = creatureCards[i].name;
-            newSelect.appendChild(option);
-        }
-
-        function funct(){
-            if (countValueInArray(BODY_PARTS, newSelect.value)) {
-                console.log('body')
-                attack.handleHitBody(newSelect.value, type, bodyPart)
-            } else {
-                attack.handleHitCreature(newSelect.value, type, bodyPart)
-            }
-        }
-        newSelect.onchange = funct;
-        div.appendChild(newSelect);
+    if (attack.actionSet[face] == MISS) {
         return
     }
-
-    if (creatureCards.length > 0) {
-        let newSelect = document.createElement("select");
-        newSelect.id = "p" + attack.attacker.id + "-" + bodyPart + "-button"
-        let defaultOption = document.createElement("option");
-        defaultOption.innerHTML = bodyPart;
-        newSelect.appendChild(defaultOption);
-
-        let option = document.createElement("option");
-        option.value = bodyPart;
-        option.innerHTML = 'body card';
-        newSelect.appendChild(option);
-        
-        for (let i = 0; i < creatureCards.length; i++){
-            let option = document.createElement("option");
-            option.value = creatureCards[i].name;
-            option.innerHTML = creatureCards[i].name;
-            newSelect.appendChild(option);
-        }
-
-        function funct(){
-            if (countValueInArray(BODY_PARTS, newSelect.value)) {
-                console.log('body')
-                attack.handleHitBody(newSelect.value, type, bodyPart)
-            } else {
-                attack.handleHitCreature(newSelect.value, type, bodyPart)
+    if (attack.actionSet[face] == CRITICAL_HIT) {
+        for (const part in BODY_PARTS){
+            if (attack.victim.bodyCards[BODY_PARTS[part]]){
+                let newButton = document.createElement("button");
+                newButton.value = BODY_PARTS[part];
+                newButton.innerHTML = BODY_PARTS[part];
+                buttons.appendChild(newButton);
+                function funct () {
+                    attack.handleHitBody(newButton.value, type, face)
+                }
+                newButton.onclick = funct;
             }
         }
-        newSelect.onchange = funct;
-        div.appendChild(newSelect);
     } else {
-        let newButton = document.createElement("button");
-        newButton.id = "p" + attack.attacker.id + "-" + bodyPart + "-button"
-        newButton.innerHTML = bodyPart;
+        const newButton = document.createElement("button");
+        newButton.innerHTML = face;
         function funct(){
-            attack.handleHitBody(bodyPart, type)
+            attack.handleHitBody(face, attack.actionSet[face], face)
         }
         newButton.onclick = funct;
-        div.appendChild(newButton);
+        buttons.appendChild(newButton);
     }
-}
 
-export function createRerollButton(attack = new Attack()){
-    const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
-    
-    let newSelect = document.createElement("select");
-    newSelect.id = "p" + attack.attacker.id + "-reroll-button";
-    let defaultOption = document.createElement("option");
-    defaultOption.innerHTML = "Reroll (" + attack.actionSet.reroll + ")";
-    newSelect.appendChild(defaultOption);
-
-    for (const face in ATTACK_DICE_FACES){
-        if (countValueInArray(attack.diceSet, ATTACK_DICE_FACES[face]) > 0){
-            let option = document.createElement("option");
-            option.value = ATTACK_DICE_FACES[face];
-            option.innerHTML = ATTACK_DICE_FACES[face];
-            newSelect.appendChild(option);
+    for (let i = 0; i < creatureCards.length; i++){
+        const newButton = document.createElement("button");
+        newButton.value = creatureCards[i].name;
+        newButton.innerHTML = creatureCards[i].name;
+        buttons.appendChild(newButton);
+        function funct () {
+            attack.handleHitCreature(newButton.value, type, face)
         }
+        newButton.onclick = funct;
     }
-    function funct(){
-        attack.handleReroll(newSelect.value)
-    }
-    newSelect.onchange = funct;
-    div.appendChild(newSelect);
-}
 
-export function createLootButton(attack = new Attack()){
-    const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
-    
-    let newSelect = document.createElement("select");
-    newSelect.id = "p" + attack.attacker.id + "-reroll-button";
-    let defaultOption = document.createElement("option");
-    defaultOption.innerHTML = "Loot (" + attack.actionSet[LOOT] + ")";
-    newSelect.appendChild(defaultOption);
-
-    for (let i = 0; i < attack.victim.activeCards.length; i++){
-        const card = attack.victim.activeCards[i]
-        if (card.type == 'item'){
-            let option = document.createElement("option");
-            option.value = card.name;
-            option.innerHTML = card.name;
-            newSelect.appendChild(option);
-        }
-    }
-    function funct(){
-        attack.handleLoot(newSelect.value)
-    }
-    newSelect.onchange = funct;
-    div.appendChild(newSelect);
-}
-
-export function createActionButtons(attack = new Attack()){
-    for(const partId in BODY_PARTS){
-        const part = BODY_PARTS[partId]
-        if (attack.actionSet[part] == CRITICAL_HIT){
-            createHitButton(attack, CRITICAL_HIT, part)
-        } else if (attack.actionSet[part] == HEAVY_HIT &&
-            attack.actionSet[part] != null){
-            createHitButton(attack, HEAVY_HIT, part)
-        } else if (attack.actionSet[part] == LIGHT_HIT &&
-            attack.actionSet[part] != null){
-            createHitButton(attack, LIGHT_HIT, part)
-        }
-    }
-    if (attack.actionSet.reroll > 0) {
-        createRerollButton(attack)
-    }
-    if (attack.actionSet[LOOT] > 0) {
-        createLootButton(attack)
-    }
 }

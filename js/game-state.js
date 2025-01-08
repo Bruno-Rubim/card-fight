@@ -38,7 +38,7 @@ class GameState {
         this.currentAttack = new Attack({attacker: this.getPlayerTurn(0), victim: this.getPlayerTurn(1)})
         this.attacksLeft--
         this.currentAttack.performAttack()
-        graphics.drawDiceSet(this.currentAttack.diceSet)
+        buttonManager.translateDiceButtons(this.currentAttack)
         this.checkPlayerActions(this.currentAttack)
         this.requestPlayerActions(this.currentAttack)
         this.drawPlayers()
@@ -46,6 +46,7 @@ class GameState {
 
     endAttack(){
         buttonManager.deletePlayerButtons(this.getPlayerTurn(0))
+        buttonManager.deleteDiceButtons(this.currentAttack)
         if (this.attacksLeft < 1) {
             this.nextTurn()
         } else {
@@ -54,8 +55,7 @@ class GameState {
     }
 
     requestPlayerActions(){
-        this.currentAttack.translateDiceSet()
-        buttonManager.createActionButtons(this.currentAttack)
+        this.currentAttack.translateDiceToActions()
     }
 
     checkPlayerActions(){
