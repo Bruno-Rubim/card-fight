@@ -17,7 +17,6 @@ export const combatBoots = new Card({
     type: 'item', 
     condition: 'been-hit', 
     effect: (attack = new Attack()) => {
-        console.log(attack)
         if ((
             attack.currentHitBodyPart == LEFT_FOOT || 
             attack.currentHitBodyPart == RIGHT_FOOT) &&

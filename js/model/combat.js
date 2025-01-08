@@ -12,7 +12,7 @@ import {
     LIGHT_HIT, 
     BODY_PARTS 
 } from "../constants.js";
-import { countValueInArray, removeAllValueFromArray } from "../general-commands.js";
+import { countValueInArray, removeAllValueFromArray, removeSomeValueFromArray } from "../general-commands.js";
 import * as buttonManager from "../button-manager.js"
 import * as graphics from "../graphics/index.js"
 import gameState from "../game-state.js";
@@ -23,7 +23,6 @@ export class Attack {
         this.attacker = attacker
         this.victim = victim
         this.diceSet = diceSet
-        this.reroll = 0 // official is 0
         this.actionSet = actionSet
         this.currentHitType = ''
         this.currentHitFace = ''
@@ -58,6 +57,7 @@ export class Attack {
             [RIGHT_HAND]: MISS,
             [FACE]: MISS,
             [LOOT]: 0,
+            reroll: 0,
         }
         
         for(let i = 0; i < ATTACK_DICE_FACES.length - 1; i++){
@@ -72,11 +72,13 @@ export class Attack {
                 this.actionSet[ATTACK_DICE_FACES[i]] = MISS
             ]
         }
-        this.actionSet[LOOT] = Math.floor(countValueInArray(this.diceSet, LOOT)/2);
-        
         if (this.checkImpossibleHits()){
             this.translateDiceSet()
         }
+
+        this.actionSet[LOOT] = Math.floor(countValueInArray(this.diceSet, LOOT)/2);
+        
+        this.actionSet.reroll = 3
     }
 
     performAttack(){
@@ -96,6 +98,7 @@ export class Attack {
         this.translateDiceSet()
 
         graphics.drawPlayerCards(this.victim)
+        graphics.drawPlayerCards(this.attacker)
         
         buttonManager.deletePlayerButtons(this.attacker)
         
@@ -120,7 +123,20 @@ export class Attack {
 
     handleReroll(face){
         rerollDie(this.diceSet, face);
-        this.reroll--
+        this.actionSet.reroll--
+        this.handleAction()
+    }
+
+    handleLoot(cardName){
+        for (let i = 0; i < this.victim.activeCards.length; i++){
+            const card = this.victim.activeCards[i]
+            console.log(card, cardName)
+            if (card.name == cardName) {
+                removeAllValueFromArray(this.victim.activeCards, card)
+                this.attacker.activeCards.push(card);
+            }
+        }
+        removeSomeValueFromArray(this.diceSet, LOOT, 2)
         this.handleAction()
     }
 }

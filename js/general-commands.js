@@ -5,13 +5,27 @@ export function countValueInArray(array, value) {
 }
 
 export function removeAllValueFromArray(array, value) {
-    var i = 0;
-    while (i < array.length) {
-      if (array[i] === value) {
-        array.splice(i, 1);
-      } else {
-        ++i;
-      }
+  let i = 0;
+  while (i < array.length) {
+    if (array[i] === value) {
+      array.splice(i, 1);
+    } else {
+      ++i;
     }
-    return array;
+  }
+  return array;
+}
+
+export function removeSomeValueFromArray(array, value, ammount) {
+  let i = 0;
+  let n = 0;
+  while (i < array.length && n < ammount) {
+    if (array[i] === value) {
+      array.splice(i, 1);
+      n++
+    } else {
+      ++i;
+    }
+  }
+  return array;
 }

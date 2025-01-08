@@ -1,4 +1,4 @@
-import { BODY_PARTS, CRITICAL_HIT, MISS, ATTACK_DICE_FACES, HEAVY_HIT, LIGHT_HIT } from "./constants.js";
+import { BODY_PARTS, CRITICAL_HIT, MISS, ATTACK_DICE_FACES, HEAVY_HIT, LIGHT_HIT, LOOT } from "./constants.js";
 import { Attack, rerollDie } from "./model/combat.js";
 import gameState from "./game-state.js";
 import * as graphics from "./graphics/index.js"
@@ -76,6 +76,55 @@ export function createHitButton(attack = new Attack(), type = '', bodyPart){
     }
 }
 
+export function createRerollButton(attack = new Attack()){
+    const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
+    
+    let newSelect = document.createElement("select");
+    newSelect.id = "p" + attack.attacker.id + "-reroll-button";
+    let defaultOption = document.createElement("option");
+    defaultOption.innerHTML = "Reroll (" + attack.actionSet.reroll + ")";
+    newSelect.appendChild(defaultOption);
+
+    for (const face in ATTACK_DICE_FACES){
+        if (countValueInArray(attack.diceSet, ATTACK_DICE_FACES[face]) > 0){
+            let option = document.createElement("option");
+            option.value = ATTACK_DICE_FACES[face];
+            option.innerHTML = ATTACK_DICE_FACES[face];
+            newSelect.appendChild(option);
+        }
+    }
+    function funct(){
+        attack.handleReroll(newSelect.value)
+    }
+    newSelect.onchange = funct;
+    div.appendChild(newSelect);
+}
+
+export function createLootButton(attack = new Attack()){
+    const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
+    
+    let newSelect = document.createElement("select");
+    newSelect.id = "p" + attack.attacker.id + "-reroll-button";
+    let defaultOption = document.createElement("option");
+    defaultOption.innerHTML = "Loot (" + attack.actionSet[LOOT] + ")";
+    newSelect.appendChild(defaultOption);
+
+    for (let i = 0; i < attack.victim.activeCards.length; i++){
+        const card = attack.victim.activeCards[i]
+        if (card.type == 'item'){
+            let option = document.createElement("option");
+            option.value = card.name;
+            option.innerHTML = card.name;
+            newSelect.appendChild(option);
+        }
+    }
+    function funct(){
+        attack.handleLoot(newSelect.value)
+    }
+    newSelect.onchange = funct;
+    div.appendChild(newSelect);
+}
+
 export function createActionButtons(attack = new Attack()){
     for(const partId in BODY_PARTS){
         const part = BODY_PARTS[partId]
@@ -92,28 +141,7 @@ export function createActionButtons(attack = new Attack()){
     if (attack.reroll > 0) {
         createRerollButton(attack)
     }
-}
-
-export function createRerollButton(attack = new Attack()){
-    const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
-    
-    let newSelect = document.createElement("select");
-    newSelect.id = "p" + attack.attacker.id + "-reroll-button";
-    let defaultOption = document.createElement("option");
-    defaultOption.innerHTML = "Reroll (" + attack.reroll + ")";
-    newSelect.appendChild(defaultOption);
-
-    for (const face in ATTACK_DICE_FACES){
-        if (countValueInArray(attack.diceSet, ATTACK_DICE_FACES[face]) > 0){
-            let option = document.createElement("option");
-            option.value = ATTACK_DICE_FACES[face];
-            option.innerHTML = ATTACK_DICE_FACES[face];
-            newSelect.appendChild(option);
-        }
+    if (attack.actionSet[LOOT] > 0) {
+        createLootButton(attack)
     }
-    function funct(){
-        attack.handleReroll(newSelect.value)
-    }
-    newSelect.onchange = funct;
-    div.appendChild(newSelect);
 }
