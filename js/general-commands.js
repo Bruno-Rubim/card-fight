@@ -4,6 +4,18 @@ export function countValueInArray(array, value) {
     return count;
 }
 
+export function findObjectWithValueArray(array, attribute, value) {
+  let i = 0;
+  while (i < array.length) {
+    if (array[i][attribute] === value) {
+      return array[i];
+    } else {
+      ++i;
+    }
+  }
+  return false;
+}
+
 export function removeAllValueFromArray(array, value) {
   let i = 0;
   while (i < array.length) {

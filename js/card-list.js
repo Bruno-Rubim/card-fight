@@ -1,7 +1,9 @@
 import { ATTACK_DICE_FACES, LEFT_FOOT, LIGHT_HIT, RIGHT_FOOT } from './constants.js';
 import gameState from './game-state.js';
+import { countValueInArray } from './general-commands.js';
 import Card from './model/card.js';
-import { addDice, Attack } from './model/combat.js';
+import { Attack } from './model/attack.js';
+import { addDice } from './combat.js';
 
 export const surfDoor = new Card({
     name: 'surf-door', 
@@ -9,13 +11,14 @@ export const surfDoor = new Card({
     condition: 'strike-hit', 
     effect: (attack = new Attack()) => {
         addDice(gameState.currentAttack.diceSet, 3)
+        gameState.activatedEffectsThisTurn.push(surfDoor)
     }
 })
 
 export const combatBoots = new Card({
     name: 'combat-boots', 
     type: 'item', 
-    condition: 'been-hit', 
+    condition: 'hit-attempt', 
     effect: (attack = new Attack()) => {
         if ((
             attack.currentHitBodyPart == LEFT_FOOT || 
@@ -23,6 +26,21 @@ export const combatBoots = new Card({
             attack.currentHitType == LIGHT_HIT
         ) {
             attack.currentHitCancel = true;
+            gameState.activatedEffectsThisTurn.push(combatBoots)
+        }
+    }
+})
+
+export const dancerSkeleton = new Card({
+    name: 'dancer-skeleton', 
+    type: 'creature', 
+    condition: 'end-attack', 
+    effect: (attack = new Attack()) => {
+        if (countValueInArray(gameState.activatedEffectsThisTurn, dancerSkeleton) == 0 &&
+        attack.hitsStruck == 0
+    ){
+            gameState.attacksLeft++
+            gameState.activatedEffectsThisTurn.push(dancerSkeleton)
         }
     }
 })

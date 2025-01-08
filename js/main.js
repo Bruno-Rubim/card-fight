@@ -9,7 +9,7 @@ player0.id = 0;
 player0.activeCards = [cards.surfDoor]
 
 player1.id = 1;
-player1.activeCards = [cards.combatBoots]
+player1.activeCards = [cards.dancerSkeleton]
 
 gameState.players = [player0, player1]
 

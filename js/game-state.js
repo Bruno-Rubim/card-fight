@@ -1,7 +1,7 @@
-import { BODY_PARTS, MISS } from "./constants.js"
+import { BODY_PARTS, LOOT, MISS } from "./constants.js"
 import * as graphics from "./graphics/index.js"
 import * as buttonManager from "./button-manager.js"
-import { Attack } from "./model/combat.js"
+import { Attack } from "./model/attack.js"
 import Player from "./model/player.js"
 
 class GameState {
@@ -14,6 +14,8 @@ class GameState {
         })
         this.turnCounter = 0;
         this.currentAttack;
+        this.activatedEffectsThisTurn = []
+        this.attacksLeft = 1
     }
 
     startGame(){
@@ -32,13 +34,23 @@ class GameState {
         })
     }
 
-    startCombat(){
+    startAttack(){
         this.currentAttack = new Attack({attacker: this.getPlayerTurn(0), victim: this.getPlayerTurn(1)})
+        this.attacksLeft--
         this.currentAttack.performAttack()
         graphics.drawDiceSet(this.currentAttack.diceSet)
         this.checkPlayerActions(this.currentAttack)
         this.requestPlayerActions(this.currentAttack)
         this.drawPlayers()
+    }
+
+    endAttack(){
+        buttonManager.deletePlayerButtons(this.getPlayerTurn(0))
+        if (this.attacksLeft < 1) {
+            this.nextTurn()
+        } else {
+            this.startAttack()
+        }
     }
 
     requestPlayerActions(){
@@ -49,19 +61,29 @@ class GameState {
     checkPlayerActions(){
         let anyleft = false
         for(const part in BODY_PARTS){
-            if (this.currentAttack.actionSet[BODY_PARTS[part]] != MISS &&
-                this.currentAttack.actionSet[BODY_PARTS[part]] != null 
-            ){
+            if (this.currentAttack.actionSet[BODY_PARTS[part]] != MISS){
                 anyleft = true;
             }
         }
+        if (this.currentAttack.actionSet[LOOT] > 0){
+            for (let i = 0; i < this.currentAttack.victim.activeCards.length; i++){
+                if (this.currentAttack.victim.activeCards[i].type == 'item'){
+                    anyleft = true;
+                }
+            }
+        }
         if (!anyleft) {
+            this.currentAttack.checkPlayerCardConditions(this.getPlayerTurn(0), 'end-attack')
             buttonManager.createEndAttackButton(this.getPlayerTurn(0))
         }
     }
 
     nextTurn(){
-
+        this.activatedEffectsThisTurn = []
+        this.turnCounter++
+        this.attacksLeft = 1;
+        buttonManager.createAttackButton(this.getPlayerTurn(0))
+        graphics.drawDiceSet([])
     }
 
 }

@@ -12,11 +12,13 @@ import {
     LIGHT_HIT, 
     BODY_PARTS 
 } from "../constants.js";
-import { countValueInArray, removeAllValueFromArray, removeSomeValueFromArray } from "../general-commands.js";
+import { countValueInArray, findObjectWithValueArray, removeAllValueFromArray, removeSomeValueFromArray } from "../general-commands.js";
 import * as buttonManager from "../button-manager.js"
 import * as graphics from "../graphics/index.js"
 import gameState from "../game-state.js";
 import Player from "./player.js";
+import { rerollDie, rerollHit, rollDiceSet } from "../combat.js";
+import Card from "./card.js";
 
 export class Attack {
     constructor({attacker = new Player(), victim = new Player(), diceSet = [], actionSet = []}){
@@ -28,6 +30,8 @@ export class Attack {
         this.currentHitFace = ''
         this.currentHitBodyPart = ''
         this.currentHitCancel = false
+        this.hitsStruck = 0
+        this.actionSet.reroll = 3
     }
 
     checkImpossibleHits(){
@@ -50,15 +54,12 @@ export class Attack {
         let minHeavy = 4;
         let minCritical = 5;
         
-        this.actionSet = {
-            [LEFT_FOOT]: MISS,
-            [RIGHT_FOOT]: MISS,
-            [LEFT_HAND]: MISS,
-            [RIGHT_HAND]: MISS,
-            [FACE]: MISS,
-            [LOOT]: 0,
-            reroll: 0,
-        }
+        this.actionSet[LEFT_FOOT] = MISS;
+        this.actionSet[RIGHT_FOOT] = MISS;
+        this.actionSet[LEFT_HAND] = MISS;
+        this.actionSet[RIGHT_HAND] = MISS;
+        this.actionSet[FACE] = MISS;
+        this.actionSet[LOOT] = 0;
         
         for(let i = 0; i < ATTACK_DICE_FACES.length - 1; i++){
             let amount = countValueInArray(this.diceSet, ATTACK_DICE_FACES[i])
@@ -75,10 +76,7 @@ export class Attack {
         if (this.checkImpossibleHits()){
             this.translateDiceSet()
         }
-
         this.actionSet[LOOT] = Math.floor(countValueInArray(this.diceSet, LOOT)/2);
-        
-        this.actionSet.reroll = 3
     }
 
     performAttack(){
@@ -88,8 +86,9 @@ export class Attack {
 
     checkPlayerCardConditions(player = new Player(), condition = ''){
         for (let i = 0; i < player.activeCards.length; i++){
-            if (player.activeCards[i].condition == condition) {
-                player.activeCards[i].effect(this)
+            const card = player.activeCards[i];
+            if (card.condition == condition) {
+                card.effect(this)
             }
         }
     }
@@ -107,15 +106,35 @@ export class Attack {
         graphics.drawDiceSet(this.diceSet)
     }
 
-    handleHit(bodyPart, type, face = bodyPart){
-        this.currentHitBodyPart = bodyPart,
-        this.currentHitFace = face,
+    handleHitBody(target, type, face = target){
+        this.currentHitBodyPart = target
+        this.currentHitFace = face
         this.currentHitType = type
         this.currentHitCancel = false
-        this.checkPlayerCardConditions(this.victim, 'been-hit')
+        this.checkPlayerCardConditions(this.victim, 'hit-attempt')
         this.diceSet = removeAllValueFromArray(this.diceSet, face)
         if (!this.currentHitCancel){
-            this.victim.bodyCards[bodyPart] = false;
+            this.victim.bodyCards[target] = false;
+            this.hitsStruck++
+            this.checkPlayerCardConditions(this.victim, 'been-hit')
+            this.checkPlayerCardConditions(this.attacker, 'strike-hit')
+        }
+        this.handleAction()
+    }
+
+    handleHitCreature(cardName = '', type, face){
+        console.log('hit creature')
+        const card = findObjectWithValueArray(this.victim.activeCards, 'name', cardName)
+        this.currentHitCreature = card
+        this.currentHitFace = face
+        this.currentHitType = type
+        this.currentHitCancel = false
+        this.checkPlayerCardConditions(this.victim, 'creature-hit')
+        this.diceSet = removeAllValueFromArray(this.diceSet, face)
+        if (!this.currentHitCancel){
+            removeAllValueFromArray(this.victim.activeCards, card);
+            this.hitsStruck++
+            this.checkPlayerCardConditions(this.attacker, 'bust-creature')
             this.checkPlayerCardConditions(this.attacker, 'strike-hit')
         }
         this.handleAction()
@@ -130,7 +149,6 @@ export class Attack {
     handleLoot(cardName){
         for (let i = 0; i < this.victim.activeCards.length; i++){
             const card = this.victim.activeCards[i]
-            console.log(card, cardName)
             if (card.name == cardName) {
                 removeAllValueFromArray(this.victim.activeCards, card)
                 this.attacker.activeCards.push(card);
@@ -138,40 +156,5 @@ export class Attack {
         }
         removeSomeValueFromArray(this.diceSet, LOOT, 2)
         this.handleAction()
-    }
-}
-
-export function rollDie(){
-    return ATTACK_DICE_FACES[Math.floor(Math.random() * 6)]
-}
-
-export function rollDiceSet(setSize){
-    let set = []
-    for(let i = 0; i < setSize;i++){
-        set.push(rollDie());
-    }
-    return set;
-}
-
-export function addDice(diceSet, ammount){
-    for(let i = 0; i < ammount; i++){
-        diceSet.push(rollDie());
-    }
-}
-
-export function rerollDie(diceSet, face){
-    for(const i in diceSet) {
-        if (diceSet[i] == face) {
-            diceSet[i] = rollDie()
-            break
-        }
-    }
-}
-
-export function rerollHit(diceSet, face){
-    for(const i in diceSet) {
-        if (diceSet[i] == face) {
-            diceSet[i] = rollDie()
-        }
     }
 }
