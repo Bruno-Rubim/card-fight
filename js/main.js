@@ -6,7 +6,7 @@ const player0 = new Player()
 const player1 = new Player()
 
 player0.id = 0;
-player0.activeCards = [cards.surfDoor]
+player0.activeCards = [cards.collorblindSpider]
 
 player1.id = 1;
 player1.activeCards = [cards.dancerSkeleton]

@@ -5,13 +5,13 @@ import Card from './model/card.js';
 import { Attack } from './model/attack.js';
 import { addDice } from './combat.js';
 
-export const surfDoor = new Card({
-    name: 'surf-door', 
-    type: 'item', 
-    condition: 'strike-hit', 
+//item
+export const collorblindSpider = new Card({
+    name: 'colorblind-spider', 
+    type: 'creature', 
+    condition: 'calculate-dice', 
     effect: (attack = new Attack()) => {
-        addDice(gameState.currentAttack.diceSet, 3)
-        gameState.activatedEffectsThisTurn.push(surfDoor)
+        attack.additionalDice += 3;
     }
 })
 
@@ -37,10 +37,20 @@ export const dancerSkeleton = new Card({
     condition: 'end-attack', 
     effect: (attack = new Attack()) => {
         if (countValueInArray(gameState.activatedEffectsThisTurn, dancerSkeleton) == 0 &&
-        attack.hitsStruck == 0
-    ){
+            attack.hitsStruck == 0
+        ){
             gameState.attacksLeft++
             gameState.activatedEffectsThisTurn.push(dancerSkeleton)
         }
+    }
+})
+
+export const surfDoor = new Card({
+    name: 'surf-door', 
+    type: 'item', 
+    condition: 'strike-hit', 
+    effect: (attack = new Attack()) => {
+        addDice(gameState.currentAttack.diceSet, 3)
+        gameState.activatedEffectsThisTurn.push(surfDoor)
     }
 })

@@ -18,7 +18,6 @@ import * as graphics from "../graphics/index.js"
 import gameState from "../game-state.js";
 import Player from "./player.js";
 import { rerollDie, rerollHit, rollDiceSet } from "../combat.js";
-import Card from "./card.js";
 
 export class Attack {
     constructor({attacker = new Player(), victim = new Player(), diceSet = [], actionSet = []}){
@@ -32,6 +31,7 @@ export class Attack {
         this.currentHitCancel = false
         this.hitsStruck = 0
         this.actionSet.reroll = 3
+        this.additionalDice = 0
     }
 
     checkImpossibleHits(){
@@ -80,7 +80,8 @@ export class Attack {
     }
 
     performAttack(){
-        this.diceSet = rollDiceSet(this.attacker.baseDice);
+        this.checkPlayerCardConditions(this.attacker, 'calculate-dice')
+        this.diceSet = rollDiceSet(this.attacker.baseDice + this.additionalDice);
         this.translateDiceSet();
     }
 
