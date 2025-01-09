@@ -105,29 +105,46 @@ export function deleteSelection(attack = new Attack()){
 }
 
 export function createSelection(attack = new Attack(), face){
+
     const selection = document.querySelector("#p" + attack.attacker.id + "-selection")
-    selection.innerHTML = ''
     const buttons = document.querySelector("#p" + attack.attacker.id + "-buttons")
-    buttons.innerHTML = ''
     const selected = document.createElement('i')
+    const itemCards = []
+    
+    for (let i = 0; i < attack.victim.activeCards.length; i++){
+        const card  = attack.victim.activeCards[i];
+        if (card.type == 'item'){
+            itemCards.push(card)
+        }
+    }
+
+    if (itemCards.length == 0 && attack.actionSet.reroll == 0 && face == LOOT) {
+        console.log(attack.actionSet)
+        return
+    }
+    
+    selection.innerHTML = ''
+    buttons.innerHTML = ''
     selection.appendChild(selected)
     selected.id = ('p' + attack.attacker.id + '-selected')
     selected.innerHTML = attack.actionSet[face];
 
-    if (face == LOOT) {
-        const itemCards = []
-        for (let i = 0; i < attack.victim.activeCards.length; i++){
-            const card  = attack.victim.activeCards[i];
-            if (card.type == 'item'){
-                itemCards.push(card)
-            }
+    if (attack.actionSet.reroll > 0){
+        console.log('rerolls')
+        const newButton = document.createElement("button");
+        newButton.innerHTML = 'reroll (' + attack.actionSet.reroll + ')';
+        buttons.appendChild(newButton);
+        function funct () {
+            attack.handleReroll(face);
         }
+        newButton.onclick = funct;
+    }
 
-        if (itemCards.length == 0) {
-            console.log(attack.actionSet)
+    if (face == LOOT) {
+        selected.innerHTML = face + " (" + attack.actionSet[face] + ")";
+        if (attack.actionSet[LOOT] < 1) {
             return
         }
-
         for (let i = 0; i < itemCards.length; i++){
             const newButton = document.createElement("button");
             newButton.value = itemCards[i].name;
@@ -187,5 +204,4 @@ export function createSelection(attack = new Attack(), face){
         }
         newButton.onclick = funct;
     }
-
 }

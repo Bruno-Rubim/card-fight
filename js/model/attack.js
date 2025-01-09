@@ -108,7 +108,6 @@ export class Attack {
         
         gameState.checkPlayerActions(this)
         gameState.requestPlayerActions(this)
-        graphics.drawDiceSet(this.diceSet)
     }
 
     handleHitBody(targetCard, type, face = targetCard){

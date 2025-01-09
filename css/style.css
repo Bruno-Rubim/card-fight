@@ -12,6 +12,11 @@ img {
     image-rendering: pixelated;
 }
 
+#dice > button {
+    border: none;
+    background-color: transparent;
+}
+
 #dice {
     height: 64px; 
     padding: 32px; 
