@@ -63,3 +63,5 @@ export const xBacon = new Card({
         attack.actionSet.reroll += 4;
     }
 })
+
+export const allCards = [collorblindSpider, combatBoots, dancerSkeleton, surfDoor, xBacon]

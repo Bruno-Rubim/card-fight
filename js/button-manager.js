@@ -2,10 +2,28 @@ import { BODY_PARTS, CRITICAL_HIT, MISS, ATTACK_DICE_FACES, HEAVY_HIT, LIGHT_HIT
 import { Attack } from "./model/attack.js";
 import gameState from "./game-state.js";
 import { countValueInArray, removeAllValueFromArray } from "./general-commands.js";
+import Card from "./model/card.js";
+import Player from "./model/player.js";
+import { colorHex } from "./graphics/colors.js";
 
 export function deletePlayerButtons(player){
     const div = document.querySelector('#p' + player.id + '-buttons')
     div.innerHTML = '';
+}
+
+export function createDrawButton(player){
+    const div = document.querySelector('#p' + player.id + '-buttons')
+    
+    let newButton = document.createElement("button");
+    newButton.id = "p" + player.id + "-draw-button"
+    newButton.innerHTML = "Draw Cards";
+    function funct(){
+        deletePlayerButtons(player)
+        gameState.drawCardOptions()
+    }   
+    newButton.onclick = funct;
+
+    div.appendChild(newButton);
 }
 
 export function createAttackButton(player){
@@ -42,7 +60,7 @@ export function deleteDiceButtons(attack = new Attack()){
     div.innerHTML = ''
 }
 
-export function translateDiceButtons(attack = new Attack()){
+export function createDiceButtons(attack = new Attack()){
     const div = document.querySelector('#dice')
     div.innerHTML = ''
     ATTACK_DICE_FACES.forEach(face => {
@@ -57,17 +75,17 @@ export function translateDiceButtons(attack = new Attack()){
             faceGroup.id = face + "-button"
         }
         let i = 0
-            let n = countValueInArray(attack.diceSet, face)
-            while (i < n){
-                let img = document.createElement("img");
-                img.width = '64'
-                img.src = "./images/dice-" + face + ".png"
-                faceGroup.appendChild(img);
-                function funct(){
-                    createSelection(attack, face)
-                }   
-                faceGroup.onclick = funct;
-                i++
+        let n = countValueInArray(attack.diceSet, face)
+        while (i < n){
+            let img = document.createElement("img");
+            img.width = '64'
+            img.src = "./images/dice-" + face + ".png"
+            faceGroup.appendChild(img);
+            function funct(){
+                createSelection(attack, face)
+            }   
+            faceGroup.onclick = funct;
+            i++
             div.appendChild(faceGroup);
         }
     })
@@ -98,7 +116,11 @@ export function createSelection(attack = new Attack(), face){
     buttons.innerHTML = ''
     selection.appendChild(selected)
     selected.id = ('p' + attack.attacker.id + '-selected')
-    selected.innerHTML = attack.actionSet[face];
+    if (attack.actionSet[face] == MISS) {
+        selected.innerHTML = MISS + ' ' + face;
+    } else {
+        selected.innerHTML = attack.actionSet[face];
+    }
 
     if (attack.actionSet.reroll > 0){
         const newButton = document.createElement("button");
@@ -183,3 +205,26 @@ export function createSelection(attack = new Attack(), face){
         newButton.onclick = funct;
     }
 }
+
+export function deleteCardOptionButtons() {
+    const div = document.querySelector('#dice')
+    div.innerHTML = ''
+}
+
+
+export function createCardOptionButton(player = new Player(), card = new Card()) {
+    const div = document.querySelector('#dice')
+        
+    let newButton = document.createElement("button");
+    
+    let img = document.createElement("img");
+    img.src = "./images/" + card.type + "-cards/" + card.name + ".png"
+    img.style.backgroundColor = colorHex[card.type]
+    newButton.appendChild(img);
+    function funct(){
+        gameState.cardOptionHandler(card)
+    }   
+    newButton.onclick = funct;
+    div.appendChild(newButton);
+}
+

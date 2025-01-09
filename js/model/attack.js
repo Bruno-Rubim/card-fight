@@ -85,18 +85,9 @@ export class Attack {
     }
 
     performAttack(){
-        this.checkPlayerCardConditions(this.attacker, 'calculate-dice')
+        gameState.checkPlayerCardConditions(this.attacker, 'calculate-dice')
         this.diceSet = rollDiceSet(this.attacker.baseDice + this.additionalDice);
         this.translateDiceToActions();
-    }
-
-    checkPlayerCardConditions(player = new Player(), condition = ''){
-        for (let i = 0; i < player.activeCards.length; i++){
-            const card = player.activeCards[i];
-            if (card.condition == condition) {
-                card.effect(this)
-            }
-        }
     }
 
     handleAction(){
@@ -108,7 +99,7 @@ export class Attack {
         buttonManager.deletePlayerButtons(this.attacker)
         buttonManager.deleteSelection(this)
 
-        buttonManager.translateDiceButtons(this)
+        buttonManager.createDiceButtons(this)
         
         gameState.checkPlayerActions(this)
         gameState.requestPlayerActions(this)
@@ -119,13 +110,13 @@ export class Attack {
         this.currentHitFace = face
         this.currentHitType = type
         this.currentHitCancel = false
-        this.checkPlayerCardConditions(this.victim, 'hit-attempt')
+        gameState.checkPlayerCardConditions(this.victim, 'hit-attempt')
         this.diceSet = removeAllValueFromArray(this.diceSet, face)
         if (!this.currentHitCancel){
             this.victim.bodyCards[targetCard] = false;
             this.hitsStruck++
-            this.checkPlayerCardConditions(this.victim, 'been-hit')
-            this.checkPlayerCardConditions(this.attacker, 'strike-hit')
+            gameState.checkPlayerCardConditions(this.victim, 'been-hit')
+            gameState.checkPlayerCardConditions(this.attacker, 'strike-hit')
         }
         this.handleAction()
     }
@@ -136,13 +127,13 @@ export class Attack {
         this.currentHitFace = face
         this.currentHitType = type
         this.currentHitCancel = false
-        this.checkPlayerCardConditions(this.victim, 'creature-hit')
+        gameState.checkPlayerCardConditions(this.victim, 'creature-hit')
         this.diceSet = removeAllValueFromArray(this.diceSet, face)
         if (!this.currentHitCancel){
             removeAllValueFromArray(this.victim.activeCards, card);
             this.hitsStruck++
-            this.checkPlayerCardConditions(this.attacker, 'bust-creature')
-            this.checkPlayerCardConditions(this.attacker, 'strike-hit')
+            gameState.checkPlayerCardConditions(this.attacker, 'bust-creature')
+            gameState.checkPlayerCardConditions(this.attacker, 'strike-hit')
         }
         this.handleAction()
     }

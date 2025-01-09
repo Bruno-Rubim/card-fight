@@ -3,6 +3,9 @@ import * as graphics from "./graphics/index.js"
 import * as buttonManager from "./button-manager.js"
 import { Attack } from "./model/attack.js"
 import Player from "./model/player.js"
+import { allCards } from "./card-list.js"
+import Card from "./model/card.js"
+import { removeAllValueFromArray, removeSomeValueFromArray } from "./general-commands.js"
 
 class GameState {
     constructor(){
@@ -16,10 +19,14 @@ class GameState {
         this.currentAttack;
         this.activatedEffectsThisTurn = []
         this.attacksLeft = 1
+        this.mainDeck = []
+        this.renewelDeck = []
+        this.cardOptions = []
     }
 
     startGame(){
-        buttonManager.createAttackButton(this.getPlayerTurn(0))
+        this.mainDeck = allCards.slice()
+        buttonManager.createDrawButton(this.getPlayerTurn(0))
         this.drawPlayers()
     }
 
@@ -34,11 +41,56 @@ class GameState {
         })
     }
 
+    drawCardOptions(){
+        let i = 0;
+        const player = this.getPlayerTurn(0)
+        this.checkPlayerCardConditions(player, 'draw-options')
+        if (player.baseDrawOptions > this.mainDeck.length){
+            this.mainDeck = (this.mainDeck.concat(this.renewelDeck))
+            this.renewelDeck = []
+        }
+        if (this.mainDeck.length == 0){
+            console.log('no more cards')
+            buttonManager.createAttackButton(this.getPlayerTurn(0))
+            return
+        }
+        while (i < player.baseDrawOptions) {
+            const j = Math.floor(Math.random() * this.mainDeck.length);
+            const card = this.mainDeck[j]
+            if (card == undefined){
+                break
+            }
+            this.cardOptions.push(card)
+            this.mainDeck.splice(j, 1)
+            buttonManager.createCardOptionButton(player, card)
+            i++
+        }
+    }
+
+    cardOptionHandler(card = new Card()){
+        removeAllValueFromArray(this.cardOptions, card)
+        this.renewelDeck = (this.renewelDeck.concat(this.cardOptions))
+        this.cardOptions = []
+        this.getPlayerTurn(0).activeCards.push(card)
+        graphics.drawPlayerCards(this.getPlayerTurn(0))
+        buttonManager.deleteCardOptionButtons()
+        buttonManager.createAttackButton(this.getPlayerTurn(0))
+    }
+
+    checkPlayerCardConditions(player = new Player(), condition = ''){
+        for (let i = 0; i < player.activeCards.length; i++){
+            const card = player.activeCards[i];
+            if (card.condition == condition) {
+                card.effect(this.currentAttack)
+            }
+        }
+    }
+
     startAttack(){
         this.currentAttack = new Attack({attacker: this.getPlayerTurn(0), victim: this.getPlayerTurn(1)})
         this.attacksLeft--
         this.currentAttack.performAttack()
-        buttonManager.translateDiceButtons(this.currentAttack)
+        buttonManager.createDiceButtons(this.currentAttack)
         this.checkPlayerActions(this.currentAttack)
         this.requestPlayerActions(this.currentAttack)
         this.drawPlayers()
@@ -73,7 +125,7 @@ class GameState {
             }
         }
         if (!anyleft) {
-            this.currentAttack.checkPlayerCardConditions(this.getPlayerTurn(0), 'end-attack')
+            this.checkPlayerCardConditions(this.getPlayerTurn(0), 'end-attack')
             buttonManager.createEndAttackButton(this.getPlayerTurn(0))
         }
     }
@@ -82,7 +134,7 @@ class GameState {
         this.activatedEffectsThisTurn = []
         this.turnCounter++
         this.attacksLeft = 1;
-        buttonManager.createAttackButton(this.getPlayerTurn(0))
+        buttonManager.createDrawButton(this.getPlayerTurn(0))
     }
 
 }
