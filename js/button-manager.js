@@ -118,8 +118,8 @@ export function createSelection(attack = new Attack(), face){
         }
     }
 
-    if (itemCards.length == 0 && attack.actionSet.reroll == 0 && face == LOOT) {
-        console.log(attack.actionSet)
+    if (itemCards.length == 0 && face == LOOT) {
+        gameState.checkPlayerActions()
         return
     }
     
@@ -169,6 +169,7 @@ export function createSelection(attack = new Attack(), face){
     const type = attack.actionSet[face];
 
     if (attack.actionSet[face] == MISS) {
+        gameState.checkPlayerActions()
         return
     }
     if (attack.actionSet[face] == CRITICAL_HIT) {
