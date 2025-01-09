@@ -19,9 +19,12 @@ const images = {
     itemBg: await loadImage('./images/item-cards/bg.png'),
     combatBoots: await loadImage('./images/item-cards/combat-boots.png'),
     invisibleGuitar: await loadImage('./images/item-cards/invisible-guitar.png'),
+    surfDoor: await loadImage('./images/item-cards/surf-door.png'),
+    xBacon: await loadImage('./images/item-cards/x-bacon.png'),
     
     creatureBg: await loadImage('./images/creature-cards/bg.png'),
     colorblindSpider: await loadImage('./images/creature-cards/colorblind-spider.png'),
+    dancerSkeleton: await loadImage('./images/creature-cards/dancer-skeleton.png'),
     
     instantBg: await loadImage('./images/instant-cards/bg.png'),
     prosthetics: await loadImage('./images/instant-cards/prosthetics.png'),

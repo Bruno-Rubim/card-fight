@@ -31,13 +31,17 @@ export class Attack {
         this.currentHitBodyPart = ''
         this.currentHitCancel = false
         this.hitsStruck = 0
-        this.actionSet.reroll = 3
+        this.actionSet.reroll = 0
         this.additionalDice = 0
     }
 
     checkImpossibleHits(){
         let setChanged = false;
     
+        if (findObjectWithValueArray(this.victim.activeCards, 'type', 'creature')){
+            false
+        }
+
         for(const i in BODY_PARTS){
             if (!this.victim.bodyCards[BODY_PARTS[i]] && 
                 this.actionSet[BODY_PARTS[i]] != MISS && 
@@ -116,9 +120,7 @@ export class Attack {
         this.currentHitType = type
         this.currentHitCancel = false
         this.checkPlayerCardConditions(this.victim, 'hit-attempt')
-        console.log(this.diceSet)
         this.diceSet = removeAllValueFromArray(this.diceSet, face)
-        console.log(this.diceSet)
         if (!this.currentHitCancel){
             this.victim.bodyCards[targetCard] = false;
             this.hitsStruck++
@@ -129,7 +131,6 @@ export class Attack {
     }
 
     handleHitCreature(cardName = '', type, face){
-        console.log('hit creature')
         const card = findObjectWithValueArray(this.victim.activeCards, 'name', cardName)
         this.currentHitCreature = card
         this.currentHitFace = face

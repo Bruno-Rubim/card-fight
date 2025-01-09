@@ -54,3 +54,12 @@ export const surfDoor = new Card({
         gameState.activatedEffectsThisTurn.push(surfDoor)
     }
 })
+
+export const xBacon = new Card({
+    name: 'x-bacon', 
+    type: 'item', 
+    condition: 'calculate-dice', 
+    effect: (attack = new Attack()) => {
+        attack.actionSet.reroll += 4;
+    }
+})

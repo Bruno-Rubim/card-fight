@@ -83,7 +83,6 @@ class GameState {
         this.turnCounter++
         this.attacksLeft = 1;
         buttonManager.createAttackButton(this.getPlayerTurn(0))
-        graphics.drawDiceSet([])
     }
 
 }

@@ -37,30 +37,6 @@ export function createEndAttackButton(player){
     div.appendChild(newButton);
 }
 
-export function createRerollButton(attack = new Attack()){
-    // const div = document.querySelector('#p' + attack.attacker.id + '-buttons')
-    
-    // let newSelect = document.createElement("select");
-    // newSelect.id = "p" + attack.attacker.id + "-reroll-button";
-    // let defaultOption = document.createElement("option");
-    // defaultOption.innerHTML = "Reroll (" + attack.actionSet.reroll + ")";
-    // newSelect.appendChild(defaultOption);
-
-    // for (const face in ATTACK_DICE_FACES){
-    //     if (countValueInArray(attack.diceSet, ATTACK_DICE_FACES[face]) > 0){
-    //         let option = document.createElement("option");
-    //         option.value = ATTACK_DICE_FACES[face];
-    //         option.innerHTML = ATTACK_DICE_FACES[face];
-    //         newSelect.appendChild(option);
-    //     }
-    // }
-    // function funct(){
-    //     attack.handleReroll(newSelect.value)
-    // }
-    // newSelect.onchange = funct;
-    // div.appendChild(newSelect);
-}
-
 export function deleteDiceButtons(attack = new Attack()){
     const div = document.querySelector('#dice')
     div.innerHTML = ''
@@ -117,11 +93,6 @@ export function createSelection(attack = new Attack(), face){
             itemCards.push(card)
         }
     }
-
-    if (itemCards.length == 0 && face == LOOT) {
-        gameState.checkPlayerActions()
-        return
-    }
     
     selection.innerHTML = ''
     buttons.innerHTML = ''
@@ -130,7 +101,6 @@ export function createSelection(attack = new Attack(), face){
     selected.innerHTML = attack.actionSet[face];
 
     if (attack.actionSet.reroll > 0){
-        console.log('rerolls')
         const newButton = document.createElement("button");
         newButton.innerHTML = 'reroll (' + attack.actionSet.reroll + ')';
         buttons.appendChild(newButton);
@@ -140,9 +110,16 @@ export function createSelection(attack = new Attack(), face){
         newButton.onclick = funct;
     }
 
+    if (itemCards.length == 0 && face == LOOT) {
+        selection.innerHTML = 'Nothing to loot'
+        gameState.checkPlayerActions()
+        return
+    }
+
     if (face == LOOT) {
         selected.innerHTML = face + " (" + attack.actionSet[face] + ")";
         if (attack.actionSet[LOOT] < 1) {
+            gameState.checkPlayerActions()
             return
         }
         for (let i = 0; i < itemCards.length; i++){
@@ -168,7 +145,7 @@ export function createSelection(attack = new Attack(), face){
     
     const type = attack.actionSet[face];
 
-    if (attack.actionSet[face] == MISS) {
+    if (type == MISS) {
         gameState.checkPlayerActions()
         return
     }
