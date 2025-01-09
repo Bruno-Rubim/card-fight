@@ -6,6 +6,7 @@ class Player {
         this.activeCards = [];
         this.baseDice = 6 //official value is 6
         this.baseDrawOptions = 3
+        this.dead = false
         this.bodyCards = {
             [LEFT_FOOT]: true,
             [LEFT_HAND]: true,

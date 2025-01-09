@@ -137,6 +137,34 @@ class GameState {
         buttonManager.createDrawButton(this.getPlayerTurn(0))
     }
 
+    checkPlayersAlive(){
+        this.players.forEach(player => {
+            let dead = true
+            for(const part in player.bodyCards){
+                if (player.bodyCards[part]){
+                    dead = false
+                }
+            }
+            player.dead = dead
+        })
+    }
+
+    endGame(player = new Player()){
+        graphics.endGame(player.id)
+    }
+
+    checkWinCondition(){
+        this.checkPlayersAlive()
+        const alivePlayers = []
+        this.players.forEach(player => {
+            if (!player.dead){
+                alivePlayers.push(player)
+            }
+        })
+        if (alivePlayers.length == 1) {
+            this.endGame(alivePlayers[0])
+        }
+    }
 }
 
 export default new GameState()

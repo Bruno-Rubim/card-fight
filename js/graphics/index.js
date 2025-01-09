@@ -23,3 +23,9 @@ export function drawPlayerCards(player = new Player()) {
         body.appendChild(img);
     }
 }
+
+export function endGame(id){
+    const body = document.querySelector('body')
+    body.innerHTML = "<h1> congrats player " + (id + 1) + " you won, here's your win screen</h1>"
+    
+}

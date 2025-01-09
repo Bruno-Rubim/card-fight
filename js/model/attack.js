@@ -100,9 +100,10 @@ export class Attack {
         buttonManager.deleteSelection(this)
 
         buttonManager.createDiceButtons(this)
-        
+
         gameState.checkPlayerActions(this)
         gameState.requestPlayerActions(this)
+        gameState.checkWinCondition()
     }
 
     handleHitBody(targetCard, type, face = targetCard){
