@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>rules for dbirlw</title>
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="shortcut icon" href="./images/dbirlw-icon.png" type="image/x-icon" />
+        <script type="module" src="./js/main.js"></script>
+    </head>
+    <style>
+        img{
+            width: 64px;
+        }
+    </style>
+    <body style="text-align: left; padding-right: 500px;">
+        <p>
+            Before anything this is currently a test for the mechanics, it simulates a 1v1 battle of dbirlw where you have to make choices for both players.
+            <h3>Body Cards</h3>
+            Each player chooses a set of body cards of one colour, they consist of one of each of the following:
+            <p>
+                <img src="/images/dice-leftFoot.png"> Left Foot, 
+                <img src="/images/dice-leftHand.png"> Left Hand, 
+                <img src="/images/dice-face.png"> Face, 
+                <img src="/images/dice-rightHand.png"> Right Hand and 
+                <img src="/images/dice-rightFoot.png"> Right Foot.</p>
+            During attacks your body cards can get busted and flipped over, if all of your body cards are busted you loose and die in real life. 
+            
+            <h3>Turns</h3>
+            Each turn, a player has to buy a card and then target a player to attack. (in this case the only other player)
+
+            <h3>Buying Cards</h3>
+            To buy a card a player draws 3 cards from the main deck as the option cards for this purchace and choose 1 of the 3 to stay in their hand.
+            <br>During ther turn, outside of an attack, a player can choose to activate cards from their hand. (currently, bought cards instantly get activated)
+            <br>While active, a card will stay in the board of the player who played it. Each card has a type icon on the top left and an effect at the bottom that will work once the card is active.
+            <br>
+            <br>There are 5 (currently 2 implemented) types of cards you can draw from the main deck:
+
+            <h3><img src="/images/item-icon.png">Item</h3>
+            This card can be looted during attacks when rolling two <img src="/images/dice-loot.png"> item icons.
+
+            <h3><img src="/images/creature-icon.png">Creature</h3>
+            This card can be busted during combat with any hit.
+
+            <!-- <h3>Instant</h3>
+            Once its effect is done, this card will be placed to the discard pile.
+
+            <h3>Reaction</h3>
+            This card can only be activated when a trigger is met, which is written in the card's description. Once its effect is done, this card will be placed in the discard pile. Attacks caused by reaction cards will interrupt any attack currently happening.
+
+            <h3>Curse</h3>
+            To be active these cards must be placed in a body part of its owner. When that body part is busted, this card is discarted.
+
+            Some cards have icons on the top right to make it easier to quickly identify what they do.  -->
+
+            <h3>Attacking</h3>
+            When a player targets another player to attack, they then refer to each other as opponents, the attacker is the target's opponent and vice versa.
+            <br>The attacking player will roll their dice to hit the target and bust their body cards. A player's dice are counted by adding the following:
+            6 Base dice, any dice added or subtracted by the attacker's cards, any dice added or subtracted by the target's cards (cards with stripped borders are relevant to the opponent's attack). Players can only get up to 15 dice maximum, addicional dice are ignored.
+            <br><br>After rolling the dice, the attacker has to strike any hits they get, you get hits by landing dice with the same body part icon. There are 3 types of hits:
+            <p>
+                Light hits: 3 dice with the same body icon.
+                <br>Heavy hits: 4 dice with the same body icon.
+                <br>Critical hits: 5 or more dice with the same body icon.
+            </p>
+            Hits can be used to bust the body card they indicate, flipping them over, or busting any active creature card of the target. Critical hits can, in adition, be used to bust any body card, not just the one they indicate. The atacker can use all their hits in any order they choose to. They have to use all the hits they roll.
+            <br><br>If the atacker rolls a hit without any cards to bust, such as a body card that's already busted while no target creatures are active, they have to re-roll the dice of the hit. (this is done automatically)
+
+            <h3>Looting</h3>
+            If 2 dice land on the item icon, the attacker can steal one of the target's item cards, it can be active after combat. (currently looted cards are also activated automatically)
+        </p>
+    </body>
+</html>

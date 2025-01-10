@@ -1,11 +1,15 @@
 body {
     background-color: #222;
     margin: 0px;
-    overflow: hidden;
     color: #fff;
     font-size: 32px;
     font-family: 'Courier New', Courier, monospace;
     text-align: center;
+    padding: 8px;
+}
+
+a {
+    color: aquamarine;
 }
 
 img {
@@ -23,6 +27,14 @@ img {
     background-color: #111;
     text-align: center;
 }
+
+#rules {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    font-size: 16px;
+}
+
 .buttons {
     height: 32px; 
 }
